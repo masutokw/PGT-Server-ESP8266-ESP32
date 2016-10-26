@@ -7,7 +7,6 @@
 #include "sntp.h"
 #include <math.h>
 #include <stdio.h>
-//#include <Arduino.h>
 #ifndef FALSE
 #define FALSE 0
 #endif
