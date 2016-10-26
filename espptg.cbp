@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="espptg" />
+		<Option pch_mode="2" />
+		<Option compiler="null" />
+		<Build>
+			<Target title="Release">
+				<Option output="bin/Release/espptg" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="null" />
+			</Target>
+		</Build>
+		<Unit filename="command.rl" />
+		<Unit filename="esp8266pgt.ino" />
+		<Unit filename="misc.cpp" />
+		<Unit filename="misc.h" />
+		<Unit filename="motor.cpp" />
+		<Unit filename="motor.h" />
+		<Unit filename="mount.cpp" />
+		<Unit filename="mount.h" />
+		<Unit filename="piclevel.cpp" />
+		<Unit filename="piclevel.h" />
+		<Unit filename="time.cpp" />
+		<Unit filename="wifipass.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
