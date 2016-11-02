@@ -81,7 +81,7 @@ motor_set_period (char id, int base, char post)
     msg.data.dint = base;
     msg.data.buff[2] = post;
     msg.len = 7;
-    // SEND_COMMAND;
+    SEND_COMMAND;
 
 
 

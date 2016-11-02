@@ -1,4 +1,5 @@
 #include <math.h>
+#define TIM_TICK 4e-7
 typedef struct
 {
     double position,target,delta,resolution,

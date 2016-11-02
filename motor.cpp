@@ -28,7 +28,7 @@ void init_motor(motor_t* mt,char ref,int maxcounter)
     mt->speed=0;
     mt->targetspeed=0;
     mt->position=0;
-    mt->timertick=4e-7;
+    mt->timertick= TIM_TICK;
     mt->maxcounter=maxcounter;//8000*6*180;//
     mt->resolution=(2.0* M_PI) /mt->maxcounter;
     mt->acceleration=6e-4;

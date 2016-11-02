@@ -2,7 +2,7 @@
 #include <time.h>
 #include "sntp.h"
 #include <Ticker.h>
-#include <Wire.h>  // Only needed for Arduino 1.6.5 and earlier
+#include <Wire.h>
 #include "SSD1306.h"
 #include "misc.h"
 #include "piclevel.h"
@@ -88,7 +88,7 @@ void setup()
   display.clear();
   display.drawString(0, 0, "Connecting to "+String(ssid));
   display.display();
-    
+
 
     WiFi.begin(ssid, password);
     delay(500);
@@ -96,7 +96,7 @@ void setup()
     while (WiFi.status() != WL_CONNECTED && i++ < 20) delay(500);
     if(i == 21)
     {
-       
+
         while(1) delay(500);
     }
      display.clear();
@@ -104,7 +104,7 @@ void setup()
      display.drawString(0, 13, "Got IP! :"+String(WiFi.localIP()));
      display.drawString(0, 26, "Waiting for Client");
      display.display();
-    configt();
+    config_NTP(1,0);
 //start UART and the server
     Serial.begin(BAUDRATE);
     server.begin();
@@ -116,22 +116,22 @@ void setup()
     mount_test->altmotor->targetspeed=1;//5.042*SEC_TO_RAD;
 
 
-    speed_control_tckr.attach_ms(100,thread_motor,mount_test);
+    speed_control_tckr.attach_ms(50,thread_motor,mount_test);
     counters_poll_tkr.attach_ms(300,thread_counter,mount_test);
 }
 
 void loop()
-{ 
+{
  // display.drawString(0, 0, String(millis()));
   // write the buffer to the display
  // display.display();
- 
+
 
 // motor_set_period (0x30, 0x3132, 0x34); delay(1000);
 // Serial.println();
     delay(300-net_task());
     //delay(10);
-    
+
 //mount_test->azmotor->targetspeed+=(1.0)*SEC_TO_RAD;
 //mount_test->altmotor->targetspeed-=(0.1)*SEC_TO_RAD;
 //Serial.print(mount_test->altmotor->speed,6);

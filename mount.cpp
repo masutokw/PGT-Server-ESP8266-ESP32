@@ -1,5 +1,3 @@
-
-/* #line 1 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\mount.cpp" */
 #include "mount.h"
 #include <unistd.h>
 #include <pthread.h>
@@ -11,23 +9,23 @@ mount_t* create_mount(void)
 {
     //FILE  *fp;
 
-    int maxcounter=4000 * 6 * 180;
-    int maxcounteralt = 4000 * 6 * 180;
+    int maxcounter=AZ_RED;
+    int maxcounteralt = ALT_RED;
     mount_t *m;
     m = (mount_t*)malloc(sizeof(mount_t));
     //if (m) return NULL;
     m->azmotor = (motor_t*)malloc(sizeof(motor_t));
     m->altmotor = (motor_t*)malloc(sizeof(motor_t));
     m->track = 0;
-    m->rate[3] = 200.0;
-    m->rate[2] = 50.0;
-    m->rate[1] = 8.0;
-    m->rate[0] = 2.0;
+    m->rate[3] = RATE_SLEW;
+    m->rate[2] = RATE_FIND;
+    m->rate[1] = RATE_CENTER;
+    m->rate[0] = RATE_GUIDE;
     m->srate = 0;
     m->maxspeed = (m->rate[3] * SID_RATE * SEC_TO_RAD);
-    m->longitude = -4.10;
-    init_motor( m->azmotor, 0xfe, maxcounter);
-    init_motor( m->altmotor, 0xfd, maxcounteralt);
+    m->longitude = LOCAL_LONGITUDE;
+    init_motor( m->azmotor, AZ_ID, maxcounter);
+    init_motor( m->altmotor,  ALT_ID, maxcounteralt);
     return m;
 
 }
@@ -111,10 +109,12 @@ void thread_counter(mount_t* mt1)
             }
         }
 
-while(Serial.available())
-  Serial.read();
+        while(Serial.available())
+            Serial.read();
 
-     }pollcounters(253); pollcounters(254);
+    };
+    pollcounters(253);
+    pollcounters(254);
 
 }
 

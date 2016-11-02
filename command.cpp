@@ -154,7 +154,7 @@ void sync_all(void)
     mount_test->altmotor->position= mount_test->altmotor->target;
     temp=( (mount_test->altmotor->position)/(mount_test->altmotor->resolution));
     setposition(mount_test->altmotor,temp);
-    printf(" contador %d    %d \r\n",temp,mount.dec_target);
+    //printf(" contador %d    %d \r\n",temp,mount.dec_target);
     mount.current_ra=mount.ra_target;
     setposition( mount_test->azmotor,
     (mount_test->azmotor->position=calc_Ra(mount.ra_target*15.0*SEC_TO_RAD,mount_test->longitude))
