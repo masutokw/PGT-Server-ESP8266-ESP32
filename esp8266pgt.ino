@@ -106,14 +106,14 @@ void setup()
      display.display();
     config_NTP(1,0);
 //start UART and the server
-    Serial.begin(BAUDRATE);
+    Serial.begin(BAUDRATE);Serial.swap();
     server.begin();
     server.setNoDelay(true);
     mount_test=create_mount();
     mount_test->azmotor->speed=0.0;
     mount_test->altmotor->speed=0.0;
-    mount_test->azmotor->targetspeed=1;//5.042*SEC_TO_RAD;
-    mount_test->altmotor->targetspeed=1;//5.042*SEC_TO_RAD;
+    mount_test->azmotor->targetspeed=0;//5.042*SEC_TO_RAD;
+    mount_test->altmotor->targetspeed=0;//5.042*SEC_TO_RAD;
 
 
     speed_control_tckr.attach_ms(50,thread_motor,mount_test);

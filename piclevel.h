@@ -25,7 +25,7 @@
 #define PWM_FREQ_SET 24
 #define PWM_CAL_SET 5
 #define M1_GET_SPEED_CMD 6
-#define CMD_FCODE 0x33 //239
+#define CMD_FCODE 239 //0x33
 #define RESPONSE_OK 44
 
 typedef struct

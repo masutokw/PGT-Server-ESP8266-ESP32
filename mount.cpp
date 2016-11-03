@@ -65,7 +65,7 @@ void thread_counter(mount_t* mt1)
     // do
     // {
     if (Serial.available()>=18)
-    {
+    {   readcounter(mt1->azmotor);
         readcounter(mt1->altmotor);
         //goto -------------------------------------------------------------------------
         if ( mt1->altmotor->slewing)
@@ -86,7 +86,7 @@ void thread_counter(mount_t* mt1)
             }
         }
 
-        readcounter(mt1->azmotor);
+
 
         sgndelta = sign (delta = mt1->azmotor->position - calc_Ra(mt1->azmotor->target, mt1->longitude));
         //  s = wallclock_since(&t);
@@ -113,8 +113,8 @@ void thread_counter(mount_t* mt1)
             Serial.read();
 
     };
-    pollcounters(253);
     pollcounters(254);
+    pollcounters(253);
 
 }
 
