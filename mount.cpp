@@ -1,11 +1,11 @@
 #include "mount.h"
-#include <unistd.h>
-#include <pthread.h>
+//#include <unistd.h>
 #include "misc.h"
 #define SID_RATE 15.041
+char sel_flag;
 extern void* sserver(void *);
-//char sbuf[50];
 mount_t* create_mount(void)
+
 {
     //FILE  *fp;
 
@@ -55,57 +55,57 @@ void motor_speed_thread_create(void* mt)
 
 void thread_counter(mount_t* mt1)
 {
-    // wallclock_t  t;
+
     double  s;
-    //  mount_t *mt1;
-    //  mt1 = (mount_t*)mt;
     double delta;
     double sgndelta;
     double speed;
-    // do
-    // {
-    if (Serial.available()>=18)
-    {   readcounter(mt1->azmotor);
-        readcounter(mt1->altmotor);
-        //goto -------------------------------------------------------------------------
-        if ( mt1->altmotor->slewing)
-        {
-            sgndelta = (sign(delta = mt1->altmotor->delta));
-            if (fabs(delta) > (M_PI)) sgndelta = -sgndelta;
 
-            if ( fabs(delta / (SEC_TO_RAD)) >= 1.0)
+    if (Serial.available()>=9)
+    {
+        if (sel_flag)
+        {
+            readcounter(mt1->altmotor);
+            //goto -------------------------------------------------------------------------
+            if ( mt1->altmotor->slewing)
             {
-                speed = fmin(mt1->maxspeed, fabs(delta)) * sgndelta;
-                mt1->altmotor->targetspeed = -speed
-                                             ;
+                sgndelta = (sign(delta = mt1->altmotor->delta));
+                if (fabs(delta) > (M_PI)) sgndelta = -sgndelta;
+
+                if ( fabs(delta / (SEC_TO_RAD)) >= 1.0)
+                {
+                    speed = fmin(mt1->maxspeed, fabs(delta)) * sgndelta;
+                    mt1->altmotor->targetspeed = -speed
+                                                 ;
+                }
+                else
+                {
+                    mt1->altmotor->targetspeed = 0.0;
+                    mt1->altmotor->slewing = 0;
+                }
             }
-            else
-            {
-                mt1->altmotor->targetspeed = 0.0;
-                mt1->altmotor->slewing = 0;
-            }
+
         }
-
-
-
-        sgndelta = sign (delta = mt1->azmotor->position - calc_Ra(mt1->azmotor->target, mt1->longitude));
-        //  s = wallclock_since(&t);
-        // printf("That took %.6f seconds wall clock time.\n", s);
-
-        if ( mt1->azmotor->slewing)
+        else
         {
+
+             readcounter(mt1->azmotor);
             sgndelta = sign (delta = mt1->azmotor->position - calc_Ra(mt1->azmotor->target, mt1->longitude));
-            if (fabs(delta) > (M_PI)) sgndelta = -sgndelta;
-            if ( fabs(delta / (SEC_TO_RAD)) >= 1.0)
+            if ( mt1->azmotor->slewing)
             {
-                speed = fmin(mt1->maxspeed, fabs(delta)) * sgndelta;
-                mt1->azmotor->targetspeed = -(speed) + (SID_RATE * SEC_TO_RAD)
-                                            ;
-            }
-            else
-            {
-                mt1->azmotor->targetspeed = SID_RATE * SEC_TO_RAD;
-                mt1->azmotor->slewing = 0;
+                sgndelta = sign (delta = mt1->azmotor->position - calc_Ra(mt1->azmotor->target, mt1->longitude));
+                if (fabs(delta) > (M_PI)) sgndelta = -sgndelta;
+                if ( fabs(delta / (SEC_TO_RAD)) >= 1.0)
+                {
+                    speed = fmin(mt1->maxspeed, fabs(delta)) * sgndelta;
+                    mt1->azmotor->targetspeed = -(speed) + (SID_RATE * SEC_TO_RAD)
+                                                ;
+                }
+                else
+                {
+                    mt1->azmotor->targetspeed = SID_RATE * SEC_TO_RAD;
+                    mt1->azmotor->slewing = 0;
+                }
             }
         }
 
@@ -113,8 +113,9 @@ void thread_counter(mount_t* mt1)
             Serial.read();
 
     };
-    pollcounters(254);
-    pollcounters(253);
+    if (sel_flag) pollcounters(254) ;
+    else pollcounters(253);
+    sel_flag=!sel_flag;
 
 }
 
