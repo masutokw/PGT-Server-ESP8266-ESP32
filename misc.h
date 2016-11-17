@@ -1,3 +1,5 @@
+#ifndef MISC_H_INCLUDED
+#define MISC_H_INCLUDED
 #include <ESP8266WiFi.h>
 #include <time.h>
 #include <sys/time.h>
@@ -24,3 +26,4 @@ void lxprintra1(char *message,double ang);
 double calc_Ra(double lha,double longitude);
 double calc_lha(double ra,double longitude);
 void config_NTP(int zone,int dls );
+#endif

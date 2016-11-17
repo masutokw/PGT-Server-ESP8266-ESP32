@@ -12,22 +12,13 @@ int sign(double t)
     else return 1;
 
 }
-double absd(double n)
-{
-    if (n<0.0) return -n;
-    else return n;
-}
-double getposition(motor_t* mt)
-{
-    return mt->position;
-}
 
 void init_motor(motor_t* mt,char ref,int maxcounter)
 {
 
     mt->speed=0;
     mt->targetspeed=0;
-    mt->position=0;
+    mt->pos_angle=0;
     mt->timertick= TIM_TICK;
     mt->maxcounter=maxcounter;//8000*6*180;//
     mt->resolution=(2.0* M_PI) /mt->maxcounter;
@@ -66,10 +57,11 @@ void setspeed(motor_t* mt ,double tspeed)
 
 
 
-void setposition(motor_t* mt,int pos)
-{
-    set_motor_counter(mt->id,pos);
-    mt->counter=pos;
+void setposition(motor_t* mt,double pos)
+{   mt->pos_angle=pos;
+    mt->counter=trunc(mt->pos_angle/mt->resolution);
+    set_motor_counter(mt->id, mt->counter);
+
 }
 void go_to(motor_t* mt,double position,double speed)
 {}
@@ -80,8 +72,8 @@ void readcounter(motor_t* mt)
     int n=readcounters(mt->id);
     if (n!=-1)
     {
-        mt->position= mt->resolution*(mt->counter=n);
-        mt->delta= mt->position-mt->target;
+        mt->pos_angle= mt->resolution*(mt->counter=n);
+        mt->delta= mt->pos_angle-mt->target;
     }
 
 

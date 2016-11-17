@@ -1,10 +1,6 @@
-
 #include "misc.h"
 #include "time.h"
 #include "sntp.h"
-
-
-
 
 double ln_range_degrees (double angle)
 {
@@ -20,7 +16,7 @@ double ln_range_degrees (double angle)
     return angle - temp;
 }
 
-
+//input deg ,output hour
 double sidereal_timeGMT (double longitude)
 {
     struct timeval now;
@@ -40,6 +36,8 @@ double sidereal_timeGMT (double longitude)
 
     return sidereal;
 }
+
+//input deg
 double calc_Ra( double lha,double longitude)
 
 {
@@ -87,7 +85,45 @@ void lxprintra1(char *message,double ang)
 };
 void config_NTP(int zone,int dls)
 {
-configTime(zone*3600, dls*3600 ,"0.es.pool.ntp.org","cuco.rediris.es", "hora.roa.es");
+    configTime(zone*3600, dls*3600 ,"0.es.pool.ntp.org","cuco.rediris.es", "hora.roa.es");
 }
+
+void enc_to_eq(double x,double y,double *a,double  *b,char *pier)
+{
+    *a=x;
+    *pier=true;
+    if (y<=90.0) *b=y;
+    else if(y<270.0)
+    {
+        {
+            *b=180-y ;
+            if (x<180.0) *a+=180.0 ;
+            else *a-=180.0;
+            *pier=false;
+        }
+
+    }
+    else  *b=y-360.0;
+
+}
+
+
+void eq_to_enc(double *x,double *y,double a,double  b,char pier)
+{
+
+    if (pier)
+    {
+        *x=a;
+        if (b<0.0)  *y=b+360.0;
+        else *y=b;
+    }
+    else
+    {
+        *y=180-b;
+        if (b>=180.0) *x=b-180;
+        else *x=180-b;
+    }
+}
+
 
 

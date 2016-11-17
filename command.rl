@@ -6,27 +6,22 @@
 #include "mount.h"
 #include "misc.h"
 #include <math.h>
-#define MOVE printf("move ");
-#define GOTO printf("GOTO ");
-//#define RATE printf ("rateset ");
-
 #define ADD_DIGIT(var,digit) var=var*10+digit-'0';
-#define APPEND strcat(response,tmessage);//printf("%s\r\n", buffcom);
+#define APPEND strcat(response,tmessage);
+#define SYNC_MESSAGE "sync#"
+//#define SYNC_MESSAGE "Coordinates     matched.        #"
 char response [200];
 char tmessage[50];
 const int month_days[] = {31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
 struct _telescope_
 {
-    long dec_target,ra_target;
-    long alt_target,az_target;
-    long current_dec,current_ra;
-    long lat,longitude;
+   // long dec_target;
+  //  long ra_target;
     char day,month,year,dayofyear;
 }
 mount;
-extern mount_t *mount_test;
+extern mount_t *telescope;
 void lxprintde(long x)
-
 {
     char c='+';
     if (x<0)
@@ -60,31 +55,6 @@ void lxprintsite(void)
 {
     printf("Site Name#");
 };
-void move(char fc)
-{ mount_test->altmotor->slewing= mount_test->azmotor->slewing=FALSE;
-int srate=mount_test->srate;
-    switch (fc)
-    {
-    case 'n':
-
-        mount_test->altmotor->targetspeed=SID_RATE*mount_test->rate[srate]*SEC_TO_RAD;
-
-        break;
-    case 's':
-
-        mount_test->altmotor->targetspeed=-SID_RATE*mount_test->rate[srate]*SEC_TO_RAD;
-        break;
-    case 'w':
-
-        mount_test->azmotor->targetspeed= SID_RATE*mount_test->rate[srate]*SEC_TO_RAD;
-        break;
-    case 'e':
-
-        mount_test->azmotor->targetspeed=-SID_RATE*mount_test->rate[srate]*SEC_TO_RAD;
-        break;
-    };
-};
-
 
 void ltime(void)
 {
@@ -98,31 +68,29 @@ void set_cmd_exe(char cmd,long date)
     switch (cmd)
     {
     case 'r':
-        mount.ra_target=date;
-        mount_test->azmotor->target=mount_test->ra_target=date*SEC_TO_RAD*15.0;
+      //  mount.ra_target=date;
+        telescope->azmotor->target=telescope->ra_target=date*SEC_TO_RAD*15.0;
         break;
     case 'd':
-        mount.dec_target=(date) ;
-
-        mount_test->dec_target=date*SEC_TO_RAD;
-        if  (mount_test->dec_target<0.0)
-        mount_test->altmotor->target=2*M_PI+mount_test->dec_target;else
-        mount_test->altmotor->target=mount_test->dec_target;
-
+       // mount.dec_target=(date) ;
+        telescope->dec_target=date*SEC_TO_RAD;
+        if  (telescope->dec_target<0.0)
+            telescope->altmotor->target=2*M_PI+telescope->dec_target;
+        else
+            telescope->altmotor->target=telescope->dec_target;
         break;
     case 'a':
-        mount.alt_target=date;
+        telescope->alt_target=date*SEC_TO_RAD;
+
         break;
     case 'z':
-        mount.az_target=date ;
+        telescope->az_target=date*SEC_TO_RAD;
         break;
     case 't':
-        mount.lat=date ;
-        mount_test->lat=date;
+        telescope->lat=date;
         break;
     case 'g':
-        mount.longitude=date ;
-          mount_test->longitude;
+        telescope->longitude=date;
         break;
     case 'L' :
         //timer0SetOverflowCount((long) (30.518 *date));
@@ -144,64 +112,17 @@ void set_date( int day,int month,int year)
     if  ((month>2)&&(year%4==0)) mount.dayofyear++;
 
 }
-void sync_all(void)
-{int temp;
-   // mount_test->track=FALSE;
-   mount_test->altmotor->slewing= mount_test->azmotor->slewing=FALSE;
-    mount.current_dec=mount.dec_target;
-    mount_test->altmotor->position= mount_test->altmotor->target;
-    temp=( (mount_test->altmotor->position)/(mount_test->altmotor->resolution));
-    setposition(mount_test->altmotor,temp);
-    //printf(" contador %d    %d \r\n",temp,mount.dec_target);
-    mount.current_ra=mount.ra_target;
-    setposition( mount_test->azmotor,
-    (mount_test->azmotor->position=calc_Ra(mount.ra_target*15.0*SEC_TO_RAD,mount_test->longitude))
-    /mount_test->azmotor->resolution);
-    sprintf(tmessage,"sync#");
+/*void sync_all(void)
+{
+    telescope->altmotor->slewing= telescope->azmotor->slewing=FALSE;
+    setposition(telescope->altmotor,telescope->altmotor->target);
+    setposition( telescope->azmotor,calc_Ra(telescope->azmotor->target,telescope->longitude));
+    sprintf(tmessage,SYNC_MESSAGE);
+    telescope->altmotor->slewing= telescope->azmotor->slewing=FALSE;
     APPEND
 
 };
-void stop(char fc)
-{ //mount_test->track=FALSE;
-  mount_test->altmotor->slewing= mount_test->azmotor->slewing=FALSE;
-    switch (fc)
-    {
-    case 'n':
-        mount_test->altmotor->targetspeed=0.0;
-        break;
-    case 's':
-        mount_test->altmotor->targetspeed=0.0;
-        break;
-    case 'w':
-        mount_test->azmotor->targetspeed= 15.04*SEC_TO_RAD;
-        break;
-    case 'e':
-        mount_test->azmotor->targetspeed=15.04*SEC_TO_RAD;
-        break;
-    default:
-        mount_test->altmotor->targetspeed=0.0;
-        mount_test->azmotor->targetspeed=15.04*SEC_TO_RAD;
-        break;
-    };
-}
-
-void rate(char fc)
- {
-    switch (fc)
-    {
-        case 'C':mount_test->srate=1;
-        break;
-        case 'G':mount_test->srate=0;
-        break;
-         case 'M':mount_test->srate=2;
-        break;
-        case 'S':mount_test->srate=3;
-        break;
-
-
-    };
-
-}
+*/
 
 //----------------------------------------------------------------------------------------
 long command( char *str )
@@ -231,42 +152,31 @@ long command( char *str )
         action getgrads {ADD_DIGIT(deg,fc); }
         action getmin {ADD_DIGIT(min,fc); }
         action getsec {ADD_DIGIT(sec,fc); }
-
-
         action neg { neg=-1;}
-        action dir {move(stcmd);}
-        action Goto { sprintf(tmessage,"0");APPEND;
-         //mount_test->track=TRUE;
-         mount_test->altmotor->slewing= mount_test->azmotor->slewing=TRUE;
-         }
-        action stop {stop(stcmd);}
-
-        action rate {rate(stcmd); }
-
-        #action return_ra { lxprintra(mount.current_ra);}
-        #action return_dec {lxprintde( mount.current_dec);}
-        action return_ra { lxprintra1(tmessage,calc_Ra(mount_test->azmotor->position,mount_test->longitude));; APPEND;}
-        action return_dec { lxprintde1(tmessage,mount_test->altmotor->position); APPEND;}
-        action return_ra_target { lxprintra(mount.ra_target);}
-        action return_dec_target {lxprintde( mount.dec_target);}
+        action dir {mount_move(telescope,stcmd);}
+        action Goto {mount_slew(telescope); sprintf(tmessage,"0");APPEND;}
+        action stop {mount_stop(telescope,stcmd);}
+        action rate {select_rate(telescope,stcmd); }
+        action return_ra { lxprintra1(tmessage,calc_Ra(telescope->azmotor->pos_angle,telescope->longitude));; APPEND;}
+        action return_dec { lxprintde1(tmessage,telescope->altmotor->pos_angle); APPEND;}
+        action return_ra_target { ;}
+        action return_dec_target {;}
         action return_date {lxprintdate();}
         action return_site { lxprintsite();}
         action ok {;} # {sprintf(tmessage,"1");}
-        action return_longitude {sprintf(tmessage,"-004ß12#");}
-        action return_lat {sprintf(tmessage,"+36ß53#");}
-
-
+        action return_longitude {sprintf(tmessage,"-004*12#");}
+        action return_lat {sprintf(tmessage,"+36*43#");}
         action return_sid_time { ;}
-        action sync {sync_all();}
-
-        #action settargetra { set_target_ra( deg,min, sec);}
-        #action settargetde { set_target_de( deg,min, sec,neg);}
+        action sync {sync_eq(telescope);sprintf(tmessage,SYNC_MESSAGE);
+                    telescope->altmotor->slewing= telescope->azmotor->slewing=FALSE;
+                    APPEND;}
+      // action sync {sync_all();}
         action rafrac {deg+=(fc-'0')*6;}
         action return_local_time { ltime();}
-
         action set_cmd_exec {
             set_cmd_exe(stcmd,(neg*(deg )));
-            sprintf(tmessage,"1");APPEND;
+            sprintf(tmessage,"1");
+            APPEND;
             deg=sec=min=0;
         }
         action addmin {deg=deg*3600+min*60;}
@@ -277,19 +187,17 @@ long command( char *str )
 #definicion sintaxis LX terminos auxiliares
         sexmin =  ([0-5][0-9])$getmin@addmin ;
         sex= ([0-5][0-9] )$getsec@addsec;
-        deg =(([\+] | [\-]@neg) |(digit @getgrads))(digit @getgrads){2} any  sexmin ([\:]  sex)? ;
+        deg =(([\+] | [\-]@neg) |(digit @getgrads))(digit @getgrads){2} any sexmin ([\:]  sex)? ;
         RA = ([0-2] digit) $getgrads   ':' sexmin ('.'digit@rafrac | ':' sex) ;
         date = digit{2}$getmin "/" digit{2}$getsec "/" digit{2}$getgrads ;
 #Definicion sintaxis comandos
         Poll= 'G'( 'R'%return_ra | [DZA]%return_dec |'r'%return_ra_target | 'd'%return_dec_target | 'L'%return_local_time |'S'%return_local_time|'C'%return_date|'M'%return_site|'t'%return_longitude|'g'%return_lat);
         Move = 'M' ([nswe]@storecmd %dir | 'S'%Goto);
-        Rate = 'R' [CGMS]@storecmd %rate;
+        Rate = 'R' [CGMS]@storecmd (''|[0-4]) %rate;
         Set='S'(((([dazgt]@storecmd (''|space) deg ) | ([rLS]@storecmd (''|space) RA))%set_cmd_exec)|'C 'date%setdate|'w 3'%ok);
-        Sync = "CM"%sync;
+        Sync = "CM"(''|'R')%sync;
         Stop ='Q' (''|[nsew])@storecmd %stop;
-
         main := (''|'#') (':' (Set | Move | Stop|Rate | Sync | Poll) '#')*  ;
-        #1main :=  (':' (Set | Move | Stop|Rate | Sync | Poll) '#')*  ;
 
 # Initialize and execute.
         write init;
