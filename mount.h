@@ -13,22 +13,27 @@
 #define RATE_CENTER 8
 #define RATE_FIND 50
 #define RATE_SLEW 290
-#define LOCAL_LONGITUDE -4.1
+#define LOCAL_LONGITUDE -4.2
+#define LOCAL_LATITUDE 36-72
 #define ALT_ID 0XFD
 #define AZ_ID 0xFE
+#define TIME_ZONE 1
+
 typedef struct
 {
-  motor_t *altmotor,*azmotor;
-  double dec_target,ra_target;//radians
-  double alt_target,az_target;
+    motor_t *altmotor,*azmotor;
+    double dec_target,ra_target;//radians
+    double alt_target,az_target;
 //  double current_dec,current_ra;//
-  double lat,longitude;
-  double rate[4];
-  double maxspeed;
-  int srate;
-  int track;
+    double lat,longitude;
+    double rate[4];
+    double maxspeed;
+    int srate;
+    int track;
+    int time_zone;
 
 } mount_t;
+
 void readconfig(mount_t *mt);
 mount_t* create_mount(void);
 int destroy_mount(mount_t* m);

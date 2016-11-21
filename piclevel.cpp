@@ -6,6 +6,7 @@
 picmsg  msg = {CMD_FCODE, 0xFE, 0xFE, 0xFF, 0, 0};
 
 int h, v;
+
 /*int readcounters (char id)
 {
     PICRSP rsp;
@@ -36,7 +37,8 @@ int h, v;
 };
 */
 void pollcounters(char id)
-{ PICRSP rsp;
+{
+    PICRSP rsp;
 
     int  count, countr;
     ASGN = COUNTERS_GET_CMD;
@@ -53,7 +55,7 @@ int readcounters (char id)
     msg.len = 4;
     countr = 0;
     count = 9;
-     if (Serial.available())
+    if (Serial.available())
     {
 
         countr = Serial.readBytes((char *)&rsp,count);

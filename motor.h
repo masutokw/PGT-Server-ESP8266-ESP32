@@ -1,5 +1,6 @@
 #ifndef MOTOR_H_INCLUDED
 #define MOTOR_H_INCLUDED
+#include <ESP8266WiFi.h>
 #include <math.h>
 #define TIM_TICK 4e-7
 #define SEC_TO_RAD (M_PI/(3600.0*180.0))
@@ -14,7 +15,7 @@ typedef struct
 } motor_t;
 
 int sign(double t);
-void init_motor(motor_t* mt,char ref,int maxcounter);
+void init_motor(motor_t* mt,char ref,int maxcounter,double spd);
 double getposition(motor_t* mt);
 void  setspeed(motor_t* mt,double tspeed);
 void  setmaxcounter(motor_t* M,int value);

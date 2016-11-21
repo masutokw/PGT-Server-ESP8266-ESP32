@@ -13,11 +13,11 @@ int sign(double t)
 
 }
 
-void init_motor(motor_t* mt,char ref,int maxcounter)
+void init_motor(motor_t* mt,char ref,int maxcounter,double spd)
 {
 
     mt->speed=0;
-    mt->targetspeed=0;
+    mt->targetspeed=spd;
     mt->pos_angle=0;
     mt->timertick= TIM_TICK;
     mt->maxcounter=maxcounter;//8000*6*180;//
@@ -58,7 +58,8 @@ void setspeed(motor_t* mt ,double tspeed)
 
 
 void setposition(motor_t* mt,double pos)
-{   mt->pos_angle=pos;
+{
+    mt->pos_angle=pos;
     mt->counter=trunc(mt->pos_angle/mt->resolution);
     set_motor_counter(mt->id, mt->counter);
 

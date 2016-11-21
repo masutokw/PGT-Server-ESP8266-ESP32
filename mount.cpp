@@ -1,7 +1,7 @@
 #include "mount.h"
 #include "misc.h"
 #define SID_RATE 15.04106711786691
-#define ARC_SEC_LMT 3.5
+#define ARC_SEC_LMT 1
 char sel_flag;
 
 mount_t* create_mount(void)
@@ -10,7 +10,7 @@ mount_t* create_mount(void)
 
 
     int maxcounter=AZ_RED;
-    int maxcounteralt = ALT_RED;
+    int maxcounteralt =ALT_RED;
     mount_t *m;
     m = (mount_t*)malloc(sizeof(mount_t));
     //if (m) return NULL;
@@ -24,8 +24,10 @@ mount_t* create_mount(void)
     m->srate = 0;
     m->maxspeed = (m->rate[3] * SID_RATE * SEC_TO_RAD);
     m->longitude = LOCAL_LONGITUDE;
-    init_motor( m->azmotor, AZ_ID, maxcounter);
-    init_motor( m->altmotor,  ALT_ID, maxcounteralt);
+    m->lat = LOCAL_LATITUDE;
+    m->time_zone = TIME_ZONE;
+    init_motor( m->azmotor, AZ_ID, maxcounter,SID_RATE * SEC_TO_RAD);
+    init_motor( m->altmotor,  ALT_ID, maxcounteralt,0);
     return m;
 
 }
@@ -51,9 +53,10 @@ void thread_counter(mount_t* mt1)
     double delta;
     double sgndelta;
     double speed;
-
-    if (Serial.available()>=9)
+    int aval=Serial.available();
+    if (aval>=9)
     {
+        while(Serial.available()>9) Serial.read();
         if (sel_flag)
         {
             readcounter(mt1->altmotor);
@@ -81,10 +84,10 @@ void thread_counter(mount_t* mt1)
         {
 
             readcounter(mt1->azmotor);
-             sgndelta = sign (delta =mt1->azmotor->delta= mt1->azmotor->pos_angle - calc_Ra(mt1->azmotor->target, mt1->longitude));
+            sgndelta = sign (delta =mt1->azmotor->delta= mt1->azmotor->pos_angle - calc_Ra(mt1->azmotor->target, mt1->longitude));
             if ( mt1->azmotor->slewing)
             {
-              //  sgndelta = sign (delta =mt1->azmotor->delta= mt1->azmotor->pos_angle - calc_Ra(mt1->azmotor->target, mt1->longitude));
+                //  sgndelta = sign (delta =mt1->azmotor->delta= mt1->azmotor->pos_angle - calc_Ra(mt1->azmotor->target, mt1->longitude));
                 if (fabs(delta) > (M_PI)) sgndelta = -sgndelta;
                 if ( fabs(delta / (SEC_TO_RAD)) > ARC_SEC_LMT)
                 {
@@ -99,8 +102,7 @@ void thread_counter(mount_t* mt1)
             }
         }
 
-        while(Serial.available())
-            Serial.read();
+        while(Serial.available())            Serial.read();
 
     };
     if (sel_flag) pollcounters(254) ;
@@ -196,7 +198,8 @@ int mount_slew(mount_t *mt)
     mt->azmotor->slewing=mt->altmotor->slewing=true;
 };
 
-int get_pierside(mount_t *mt){
+int get_pierside(mount_t *mt)
+{
 
     return (((mt->altmotor->counter) > (mt->altmotor->maxcounter / 4 ))&&((mt->altmotor->counter) < (3 * mt->altmotor->maxcounter / 4 )));
 }

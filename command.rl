@@ -87,10 +87,10 @@ void set_cmd_exe(char cmd,long date)
         telescope->az_target=date*SEC_TO_RAD;
         break;
     case 't':
-        telescope->lat=date;
+        telescope->lat=date/3600.0;
         break;
     case 'g':
-        telescope->longitude=date;
+        telescope->longitude=(-neg)*(date/3600.0);
         break;
     case 'L' :
         //timer0SetOverflowCount((long) (30.518 *date));
@@ -164,13 +164,13 @@ long command( char *str )
         action return_date {lxprintdate();}
         action return_site { lxprintsite();}
         action ok {;} # {sprintf(tmessage,"1");}
-        action return_longitude {sprintf(tmessage,"-004*12#");}
+        action return_longitude {sprintf(tmessage,"+004*12#");}
         action return_lat {sprintf(tmessage,"+36*43#");}
         action return_sid_time { ;}
         action sync {sync_eq(telescope);sprintf(tmessage,SYNC_MESSAGE);
                     telescope->altmotor->slewing= telescope->azmotor->slewing=FALSE;
                     APPEND;}
-      // action sync {sync_all();}
+      # action sync {sync_all();}
         action rafrac {deg+=(fc-'0')*6;}
         action return_local_time { ltime();}
         action set_cmd_exec {

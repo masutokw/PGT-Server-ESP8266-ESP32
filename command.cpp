@@ -17,8 +17,8 @@ char tmessage[50];
 const int month_days[] = {31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
 struct _telescope_
 {
-    long dec_target;
-    long ra_target;
+   // long dec_target;
+  //  long ra_target;
     char day,month,year,dayofyear;
 }
 mount;
@@ -70,11 +70,11 @@ void set_cmd_exe(char cmd,long date)
     switch (cmd)
     {
     case 'r':
-        mount.ra_target=date;
+      //  mount.ra_target=date;
         telescope->azmotor->target=telescope->ra_target=date*SEC_TO_RAD*15.0;
         break;
     case 'd':
-        mount.dec_target=(date) ;
+       // mount.dec_target=(date) ;
         telescope->dec_target=date*SEC_TO_RAD;
         if  (telescope->dec_target<0.0)
             telescope->altmotor->target=2*M_PI+telescope->dec_target;
@@ -89,10 +89,10 @@ void set_cmd_exe(char cmd,long date)
         telescope->az_target=date*SEC_TO_RAD;
         break;
     case 't':
-        telescope->lat=date;
+        telescope->lat=date/3600.0;
         break;
     case 'g':
-        telescope->longitude=date;
+        telescope->longitude=date/3600.0;
         break;
     case 'L' :
         //timer0SetOverflowCount((long) (30.518 *date));
@@ -114,7 +114,7 @@ void set_date( int day,int month,int year)
     if  ((month>2)&&(year%4==0)) mount.dayofyear++;
 
 }
-void sync_all(void)
+/*void sync_all(void)
 {
     telescope->altmotor->slewing= telescope->azmotor->slewing=FALSE;
     setposition(telescope->altmotor,telescope->altmotor->target);
@@ -124,7 +124,7 @@ void sync_all(void)
     APPEND
 
 };
-
+*/
 
 //----------------------------------------------------------------------------------------
 long command( char *str )
@@ -429,8 +429,10 @@ _match:
 	{sprintf(tmessage,"+36*43#");}
 	break;
 	case 17:
-/* #line 173 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
-	{sync_all();}
+/* #line 170 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+	{sync_eq(telescope);sprintf(tmessage,SYNC_MESSAGE);
+                    telescope->altmotor->slewing= telescope->azmotor->slewing=FALSE;
+                    APPEND;}
 	break;
 	case 18:
 /* #line 174 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
@@ -465,7 +467,7 @@ _match:
 /* #line 185 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{set_date(sec,min,deg);}
 	break;
-/* #line 288 "command.cpp" */
+/* #line 290 "command.cpp" */
 		}
 	}
 
