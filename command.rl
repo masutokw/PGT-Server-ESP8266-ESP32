@@ -68,7 +68,6 @@ void set_cmd_exe(char cmd,long date)
     switch (cmd)
     {
     case 'r':
-      //  mount.ra_target=date;
         telescope->azmotor->target=telescope->ra_target=date*SEC_TO_RAD*15.0;
         break;
     case 'd':

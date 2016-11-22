@@ -190,7 +190,8 @@ void select_rate(mount_t *mt,char dir)
 }
 
 int mount_slew(mount_t *mt)
-{
+{  eq_to_enc(&(mt->azmotor->target),&(mt->altmotor->target),
+              mt->ra_target,mt->dec_target,get_pierside(mt));
     mt->azmotor->slewing=mt->altmotor->slewing=true;
 }
 
