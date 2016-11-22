@@ -9,7 +9,7 @@
 #include "mount.h"
 
 #define BAUDRATE 19200
-#define MAX_SRV_CLIENTS 1
+#define MAX_SRV_CLIENTS 3
 #define SPEED_CONTROL_TICKER 10
 #define COUNTERS_POLL_TICKER 100
 #include <FS.h>
@@ -253,7 +253,7 @@ void setup()
 
 void loop()
 {
-    delay(60);
+    delay(10);
     net_task();
     now   = time(nullptr);
     serverweb.handleClient();

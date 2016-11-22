@@ -72,7 +72,7 @@ void set_cmd_exe(char cmd,long date)
         telescope->azmotor->target=telescope->ra_target=date*SEC_TO_RAD*15.0;
         break;
     case 'd':
-       // mount.dec_target=(date) ;
+
         telescope->dec_target=date*SEC_TO_RAD;
         if  (telescope->dec_target<0.0)
             telescope->altmotor->target=2*M_PI+telescope->dec_target;
@@ -90,7 +90,7 @@ void set_cmd_exe(char cmd,long date)
         telescope->lat=date/3600.0;
         break;
     case 'g':
-        telescope->longitude=(-neg)*(date/3600.0);
+        telescope->longitude=(-date/3600.0);
         break;
     case 'L' :
         //timer0SetOverflowCount((long) (30.518 *date));
@@ -157,8 +157,10 @@ long command( char *str )
         action Goto {mount_slew(telescope); sprintf(tmessage,"0");APPEND;}
         action stop {mount_stop(telescope,stcmd);}
         action rate {select_rate(telescope,stcmd); }
-        action return_ra { lxprintra1(tmessage,calc_Ra(telescope->azmotor->pos_angle,telescope->longitude));; APPEND;}
-        action return_dec { lxprintde1(tmessage,telescope->altmotor->pos_angle); APPEND;}
+      #  action return_ra { lxprintra1(tmessage,calc_Ra(telescope->azmotor->pos_angle,telescope->longitude));; APPEND;}
+      #  action return_dec { lxprintde1(tmessage,telescope->altmotor->pos_angle); APPEND;}
+        action return_ra  {mount_lxra_str(tmessage,telescope);APPEND;}
+        action return_dec {mount_lxde_str(tmessage,telescope);APPEND;}
         action return_ra_target { ;}
         action return_dec_target {;}
         action return_date {lxprintdate();}

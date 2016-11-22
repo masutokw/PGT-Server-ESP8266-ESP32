@@ -74,7 +74,7 @@ void set_cmd_exe(char cmd,long date)
         telescope->azmotor->target=telescope->ra_target=date*SEC_TO_RAD*15.0;
         break;
     case 'd':
-       // mount.dec_target=(date) ;
+
         telescope->dec_target=date*SEC_TO_RAD;
         if  (telescope->dec_target<0.0)
             telescope->altmotor->target=2*M_PI+telescope->dec_target;
@@ -92,7 +92,7 @@ void set_cmd_exe(char cmd,long date)
         telescope->lat=date/3600.0;
         break;
     case 'g':
-        telescope->longitude=date/3600.0;
+        telescope->longitude=(-date/3600.0);
         break;
     case 'L' :
         //timer0SetOverflowCount((long) (30.518 *date));
@@ -393,57 +393,57 @@ _match:
 	{select_rate(telescope,stcmd); }
 	break;
 	case 8:
-/* #line 160 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
-	{ lxprintra1(tmessage,calc_Ra(telescope->azmotor->pos_angle,telescope->longitude));; APPEND;}
+/* #line 162 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+	{mount_lxra_str(tmessage,telescope);APPEND;}
 	break;
 	case 9:
-/* #line 161 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
-	{ lxprintde1(tmessage,telescope->altmotor->pos_angle); APPEND;}
+/* #line 163 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+	{mount_lxde_str(tmessage,telescope);APPEND;}
 	break;
 	case 10:
-/* #line 162 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 164 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{ ;}
 	break;
 	case 11:
-/* #line 163 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 165 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{;}
 	break;
 	case 12:
-/* #line 164 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 166 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{lxprintdate();}
 	break;
 	case 13:
-/* #line 165 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 167 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{ lxprintsite();}
 	break;
 	case 14:
-/* #line 166 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 168 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{;}
 	break;
 	case 15:
-/* #line 167 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
-	{sprintf(tmessage,"-004*12#");}
+/* #line 169 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+	{sprintf(tmessage,"+004*12#");}
 	break;
 	case 16:
-/* #line 168 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 170 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{sprintf(tmessage,"+36*43#");}
 	break;
 	case 17:
-/* #line 170 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 172 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{sync_eq(telescope);sprintf(tmessage,SYNC_MESSAGE);
                     telescope->altmotor->slewing= telescope->azmotor->slewing=FALSE;
                     APPEND;}
 	break;
 	case 18:
-/* #line 174 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 176 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{deg+=((*p)-'0')*6;}
 	break;
 	case 19:
-/* #line 175 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 177 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{ ltime();}
 	break;
 	case 20:
-/* #line 176 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 178 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{
             set_cmd_exe(stcmd,(neg*(deg )));
             sprintf(tmessage,"1");
@@ -452,19 +452,19 @@ _match:
         }
 	break;
 	case 21:
-/* #line 182 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 184 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{deg=deg*3600+min*60;}
 	break;
 	case 22:
-/* #line 183 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 185 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{deg+=sec;}
 	break;
 	case 23:
-/* #line 184 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 186 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{stcmd=(*p);}
 	break;
 	case 24:
-/* #line 185 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 187 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 	{set_date(sec,min,deg);}
 	break;
 /* #line 290 "command.cpp" */
@@ -480,7 +480,7 @@ _again:
 	_out: {}
 	}
 
-/* #line 205 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
+/* #line 207 "C:\\Documents and Settings\\Administrador\\Mis documentos\\Arduino\\esp8266pgt\\command.rl" */
 
 
 //---------------------------------------------------------------------------------------------------------------------

@@ -6,7 +6,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#define SID_RATE 15.041
+#define SID_RATE 15.04106711786691
+#define ARC_SEC_LMT 1.0
 #define AZ_RED 8000*6*180
 #define ALT_RED  8000*6*180
 #define RATE_GUIDE 0.5
@@ -24,18 +25,16 @@ typedef struct
     motor_t *altmotor,*azmotor;
     double dec_target,ra_target;//radians
     double alt_target,az_target;
-//  double current_dec,current_ra;//
     double lat,longitude;
     double rate[4];
     double maxspeed;
     int srate;
     int track;
     int time_zone;
-
 } mount_t;
 
-void readconfig(mount_t *mt);
 mount_t* create_mount(void);
+void readconfig(mount_t *mt);
 int destroy_mount(mount_t* m);
 int set_mount_target( mount_t *mt,double ra,double dec);
 int sync_eq(mount_t *mt);
@@ -46,4 +45,7 @@ void select_rate(mount_t *mt,char rate);
 void thread_motor(mount_t* m);
 void thread_counter(mount_t* mt);
 int get_pierside(mount_t *mt);
+void eq_to_enc(double *ra,double *dec,double a,double  b,int pier);
+void mount_lxde_str(char* message,mount_t *mt);
+void mount_lxra_str(char *message,mount_t *mt);
 #endif

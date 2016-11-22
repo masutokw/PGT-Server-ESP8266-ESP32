@@ -134,36 +134,36 @@ void enc_to_eq(double x,double y,double *a,double  *b,char *pier)
 {
     *a=x;
     *pier=true;
-    if (y<=90.0) *b=y;
-    else if(y<270.0)
+    if (y<=M_PI/2.0) *b=y;
+    else if(y<(M_PI*3/2))
     {
         {
-            *b=180-y ;
-            if (x<180.0) *a+=180.0 ;
-            else *a-=180.0;
+            *b=M_PI-y ;
+            if (x<M_PI) *a+=M_PI ;
+            else *a-=M_PI;
             *pier=false;
         }
 
     }
-    else  *b=y-360.0;
+    else  *b=y-M_PI*2;
 
 }
 
 
-void eq_to_enc(double *x,double *y,double a,double  b,char pier)
+void eq_to_enc(double *ra,double *dec,double a,double  b,int pier)
 {
 
-    if (pier)
+    if (!pier)
     {
-        *x=a;
-        if (b<0.0)  *y=b+360.0;
-        else *y=b;
+        *ra=a;
+        if (b<0.0)  *dec=b+2*M_PI;
+        else *dec=b;
     }
     else
     {
-        *y=180-b;
-        if (b>=180.0) *x=b-180;
-        else *x=180-b;
+        *dec=M_PI-b;
+        if (a>=M_PI) *ra=a-M_PI;
+        else *ra=M_PI+a;
     }
 }
 //output hours
