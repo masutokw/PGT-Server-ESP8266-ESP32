@@ -148,8 +148,8 @@ void mount_move(mount_t *mt,char dir)
 {
     mt->altmotor->slewing= mt->azmotor->slewing=FALSE;
     int srate=mt->srate;
-    int invert =1 ;
-    if (get_pierside(mt)) invert=-1;;
+    int invert =(get_pierside(mt))? -1:1;
+    int  sid = (srate==0)? 1:-1;
     switch (dir)
     {
     case 'n':
@@ -159,10 +159,10 @@ void mount_move(mount_t *mt,char dir)
         mt->altmotor->targetspeed=-SID_RATE*mt->rate[srate]*SEC_TO_RAD*invert;
         break;
     case 'w':
-        mt->azmotor->targetspeed= SID_RATE*mt->rate[srate]*SEC_TO_RAD;
+        mt->azmotor->targetspeed= SID_RATE*(mt->rate[srate]+sid)*SEC_TO_RAD;
         break;
     case 'e':
-        mt->azmotor->targetspeed=-SID_RATE*mt->rate[srate]*SEC_TO_RAD;
+        mt->azmotor->targetspeed=-SID_RATE*(mt->rate[srate]-sid)*SEC_TO_RAD;
         break;
     };
 }
