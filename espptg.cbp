@@ -21,9 +21,10 @@
 		<Unit filename="motor.h" />
 		<Unit filename="mount.cpp" />
 		<Unit filename="mount.h" />
+		<Unit filename="pad.cpp" />
+		<Unit filename="pad.h" />
 		<Unit filename="piclevel.cpp" />
 		<Unit filename="piclevel.h" />
-		<Unit filename="time.cpp" />
 		<Unit filename="wifipass.h" />
 		<Extensions>
 			<code_completion />

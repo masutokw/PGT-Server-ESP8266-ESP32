@@ -30,21 +30,21 @@
 
 typedef struct
 {
-  char code, id, idd;
-  char command;
-  union
-  {
-    char buff[4];
-    int dint;
-  } data;
-  char len;
+    char code, id, idd;
+    char command;
+    union
+    {
+        char buff[4];
+        int dint;
+    } data;
+    char len;
 } picmsg;
 //picmsg PICMSG;
 
 struct picresponse
 {
-  int counter, counteraux;
-  char control;
+    int counter, counteraux;
+    char control;
 };
 typedef struct picresponse PICRSP;
 

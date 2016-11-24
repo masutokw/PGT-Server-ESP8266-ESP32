@@ -15,7 +15,7 @@
 #define RATE_FIND 50
 #define RATE_SLEW 290
 #define LOCAL_LONGITUDE -4.2
-#define LOCAL_LATITUDE 36-72
+#define LOCAL_LATITUDE 36.72
 #define ALT_ID 0XFD
 #define AZ_ID 0xFE
 #define TIME_ZONE 1

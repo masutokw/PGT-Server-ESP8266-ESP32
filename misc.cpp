@@ -31,8 +31,8 @@ double sidereal_timeGMT (double longitude,int tz)
     double sidereal,tmp;
     double T;
     gettimeofday(&now,NULL);
-   // time_t jnow = time(nullptr);
-     JD = ((now.tv_sec+now.tv_usec/ 1000000.0)-tz*3600)/86400.0+2440587.5;
+    // time_t jnow = time(nullptr);
+    JD = ((now.tv_sec+now.tv_usec/ 1000000.0)-tz*3600)/86400.0+2440587.5;
     //JD = (jnow+(millis()%1000)/1000.0)/86400.0+2440587.5;
     T = (JD - 2451545.0) / 36525.0;
     /* calc mean angle */

@@ -1,52 +1,27 @@
 /*
  * Parses LX200 protocol.
  */
+
+#define ADD_DIGIT(var,digit) var=var*10+digit-'0';
+#define APPEND strcat(response,tmessage);
+#define SYNC_MESSAGE "sync#"
+//#define SYNC_MESSAGE "Coordinates     matched.        #"
+
 #include <string.h>
 #include <stdio.h>
 #include "mount.h"
 #include "misc.h"
 #include <math.h>
-#define ADD_DIGIT(var,digit) var=var*10+digit-'0';
-#define APPEND strcat(response,tmessage);
-#define SYNC_MESSAGE "sync#"
-//#define SYNC_MESSAGE "Coordinates     matched.        #"
+
 char response [200];
 char tmessage[50];
 const int month_days[] = {31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
 struct _telescope_
 {
-   // long dec_target;
-  //  long ra_target;
     char day,month,year,dayofyear;
 }
 mount;
 extern mount_t *telescope;
-void lxprintde(long x)
-{
-    char c='+';
-    if (x<0)
-    {
-        x=-x;
-        c= '-';
-    }
-
-    long gra=x/3600;
-    long temp=(x %3600);
-    int min=temp/60;
-    int sec=temp%60;
-    sprintf(tmessage,"%c%02d%c%02d'%02d#",c,gra,223,min,sec);
-    APPEND
-};
-
-void lxprintra(long x)
-{
-    long gra=x/3600;
-    long temp=(x %3600);
-    int min=temp/60;
-    int sec=temp%60;
-    sprintf(tmessage,"%02d:%02d:%02d#",gra,min,sec);
-    APPEND
-};
 void lxprintdate(void)
 {
     printf ("%02d/%02d/%02d#",mount.month,mount.day,mount.year);
@@ -58,9 +33,7 @@ void lxprintsite(void)
 
 void ltime(void)
 {
-    long pj =(long)1;// (timer0GetOverflowCount ()  /30.518);
-    lxprintra(pj);
-    //;rprintf("1");
+    long pj =(long)1;
 }
 
 void set_cmd_exe(char cmd,long date)
@@ -99,7 +72,7 @@ void set_cmd_exe(char cmd,long date)
 
     }
 
-    //sprintf(tmessage,"1");APPEND
+
 }
 void set_date( int day,int month,int year)
 {
@@ -111,17 +84,7 @@ void set_date( int day,int month,int year)
     if  ((month>2)&&(year%4==0)) mount.dayofyear++;
 
 }
-/*void sync_all(void)
-{
-    telescope->altmotor->slewing= telescope->azmotor->slewing=FALSE;
-    setposition(telescope->altmotor,telescope->altmotor->target);
-    setposition( telescope->azmotor,calc_Ra(telescope->azmotor->target,telescope->longitude));
-    sprintf(tmessage,SYNC_MESSAGE);
-    telescope->altmotor->slewing= telescope->azmotor->slewing=FALSE;
-    APPEND
 
-};
-*/
 
 //----------------------------------------------------------------------------------------
 long command( char *str )
@@ -132,8 +95,6 @@ long command( char *str )
     long deg=0;
     int min=0;
     int sec=0;
-
-    // deg=min=sec=0;
     int neg = 1;
     tmessage[0]=0;
     response[0]=0;
@@ -156,8 +117,6 @@ long command( char *str )
         action Goto {mount_slew(telescope); sprintf(tmessage,"0");APPEND;}
         action stop {mount_stop(telescope,stcmd);}
         action rate {select_rate(telescope,stcmd); }
-      #  action return_ra { lxprintra1(tmessage,calc_Ra(telescope->azmotor->pos_angle,telescope->longitude));; APPEND;}
-      #  action return_dec { lxprintde1(tmessage,telescope->altmotor->pos_angle); APPEND;}
         action return_ra  {mount_lxra_str(tmessage,telescope);APPEND;}
         action return_dec {mount_lxde_str(tmessage,telescope);APPEND;}
         action return_ra_target { ;}
@@ -171,7 +130,6 @@ long command( char *str )
         action sync {sync_eq(telescope);sprintf(tmessage,SYNC_MESSAGE);
                     telescope->altmotor->slewing= telescope->azmotor->slewing=FALSE;
                     APPEND;}
-      # action sync {sync_all();}
         action rafrac {deg+=(fc-'0')*6;}
         action return_local_time { ltime();}
         action set_cmd_exec {
