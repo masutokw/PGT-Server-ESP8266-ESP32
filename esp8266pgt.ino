@@ -133,7 +133,7 @@ void setup()
 
 #ifdef OLED_DISPLAY
     oled_initscr();
-    pad_Init();
+
 
 
 #endif
@@ -162,12 +162,17 @@ void setup()
     server.begin();
     server.setNoDelay(true);
     telescope = create_mount();
+    readconfig(telescope);
     config_NTP(telescope->time_zone, 0);
     initwebserver();
     delay (2000) ;
     sdt_init(telescope->longitude,telescope->time_zone);
     speed_control_tckr.attach_ms(SPEED_CONTROL_TICKER, thread_motor, telescope);
     counters_poll_tkr.attach_ms(COUNTERS_POLL_TICKER, thread_counter, telescope);
+ #ifdef OLED_DISPLAY
+    pad_Init();
+#endif // OLED_DISPLAY
+
 }
 
 void loop()

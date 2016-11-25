@@ -190,7 +190,8 @@ void select_rate(mount_t *mt,char dir)
 }
 
 int mount_slew(mount_t *mt)
-{  eq_to_enc(&(mt->azmotor->target),&(mt->altmotor->target),
+{
+    eq_to_enc(&(mt->azmotor->target),&(mt->altmotor->target),
               mt->ra_target,mt->dec_target,get_pierside(mt));
     mt->azmotor->slewing=mt->altmotor->slewing=true;
 }
@@ -205,7 +206,11 @@ void mount_lxra_str(char *message,mount_t *mt)
 {
 
     double ang=calc_Ra(mt->azmotor->pos_angle,mt->longitude);
-    if (get_pierside(mt)) {if (ang<M_PI) ang+=M_PI; else ang-=M_PI;}
+    if (get_pierside(mt))
+    {
+        if (ang<M_PI) ang+=M_PI;
+        else ang-=M_PI;
+    }
     int x = ang*RAD_TO_DEG*3600.0/15.0;
     int gra=x/3600;
     int temp=(x %3600);
@@ -219,7 +224,8 @@ void mount_lxde_str(char* message,mount_t *mt)
 {
     double ang =mt->altmotor->pos_angle;
     if (ang>1.5*M_PI) ang=ang-(M_PI*2.0)
-    ;else if (ang>M_PI/2.0) ang=M_PI-ang;
+                              ;
+    else if (ang>M_PI/2.0) ang=M_PI-ang;
 
     int x = ang*RAD_TO_DEG*3600.0;
     char c='+';
@@ -237,19 +243,30 @@ void mount_lxde_str(char* message,mount_t *mt)
 
 };
 
-void readconfig(mount_t *mt)
+int readconfig(mount_t *mt)
 {
-    //maxcounteraz
-    //rateg ratec rateF rateS accel
-    //maxcounteralt
-    //rateg ratec rateF rateS accel
-    //
-
-    //File f = SPIFFS.open("/conf.txt", "r");
-
-    //if (!f) return -1;
-
-
+    int maxcounter,maxcounteralt ;
+    File f = SPIFFS.open("mount.config", "r");
+    if (!f) return -1;
+    String s=f.readStringUntil('\n');
+    maxcounter=s.toInt();
+    s=f.readStringUntil('\n');
+    maxcounteralt=s.toInt();
+    for (int n=0; n<4; n++)
+    {
+        s=f.readStringUntil('\n');
+        mt->rate[n] = s.toFloat();
+    }
+    mt->srate = 0;
+    mt->maxspeed = (mt->rate[3] * SID_RATE * SEC_TO_RAD);
+    s=f.readStringUntil('\n');
+    mt->longitude = s.toFloat();
+    s=f.readStringUntil('\n');
+    mt->lat = s.toFloat();
+    mt->time_zone = TIME_ZONE;
+    init_motor( mt->azmotor, AZ_ID, maxcounter,SID_RATE * SEC_TO_RAD);
+    init_motor( mt->altmotor,  ALT_ID, maxcounteralt,0);
+    return 0;
 
 
 }

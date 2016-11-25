@@ -1,6 +1,8 @@
 #ifndef MOUNT_H_INCLUDED
 #define MOUNT_H_INCLUDED
 #include <ESP8266WiFi.h>
+#define COUNTERS_POLL_TICKER 100
+#include <FS.h>
 #include "piclevel.h"
 #include "motor.h"
 #include <stdlib.h>
@@ -34,7 +36,7 @@ typedef struct
 } mount_t;
 
 mount_t* create_mount(void);
-void readconfig(mount_t *mt);
+int readconfig(mount_t *mt);
 int destroy_mount(mount_t* m);
 int set_mount_target( mount_t *mt,double ra,double dec);
 int sync_eq(mount_t *mt);

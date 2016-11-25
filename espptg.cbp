@@ -25,6 +25,8 @@
 		<Unit filename="pad.h" />
 		<Unit filename="piclevel.cpp" />
 		<Unit filename="piclevel.h" />
+		<Unit filename="webserver.cpp" />
+		<Unit filename="webserver.h" />
 		<Unit filename="wifipass.h" />
 		<Extensions>
 			<code_completion />

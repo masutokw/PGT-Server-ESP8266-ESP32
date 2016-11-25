@@ -7,7 +7,7 @@ volatile int state;
 volatile int event=3;
 volatile long lastDebounceTime = 0;
 const int debounceDelay = 50;
-int bpin= 5;
+int bpin= 2;
 void pad_Init(void){
     pinMode(bpin, INPUT);
      attachInterrupt(bpin, onChange, CHANGE);
