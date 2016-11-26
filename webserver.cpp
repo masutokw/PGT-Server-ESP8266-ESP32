@@ -26,13 +26,18 @@ void handleConfig()
 
     if (serverweb.hasArg("SSID") && serverweb.hasArg("PASSWORD"))
     {
-        if (serverweb.arg("SSID") == "admin" &&  serverweb.arg("PASSWORD") == "admin" )
+        String ssid=serverweb.arg("SSID")+"\n"+serverweb.arg("PASSWORD")+"\n";
+         File f = SPIFFS.open("/wifi.config", "w");
+        if (!f)
         {
-            String header = "HTTP/1.1 301 OK\r\nSet-Cookie: ESPSESSIONID=1\r\nLocation: /\r\nCache-Control: no-cache\r\n\r\n";
-            serverweb.sendContent(header);
-            Serial.println("Log in Successful");
-            return;
+            ssid=("file open failed");
         }
+        else
+            f.println(ssid);
+        f.close ();
+
+
+
         msg = serverweb.arg("MAXCOUNTER");
         msg+="\n"+serverweb.arg("MAXCOUNTER_ALT");
         msg+="\n"+serverweb.arg("GUIDE");
@@ -46,29 +51,30 @@ void handleConfig()
         telescope->rate[3]=temp.toFloat();
         Serial.println("Log in Failed");
 
-        File f = SPIFFS.open("/mount.config", "w");
+        f = SPIFFS.open("/mount.config", "w");
         if (!f)
         {
-           msg=("file open failed");
-        } else
-        f.println(msg);
+            msg=("file open failed");
+        }
+        else
+            f.println(msg);
         f.close ();
     }
-    String content = "<html><body><form action='/config' method='POST'><h2>ESP-PGT++ Config</h2><br>";
+    String content = "<html><body min-height: 100%;><form action='/config' method='POST'><h2>ESP-PGT++ Config</h2><br>";
     content+="<fieldset> <legend>Login  information:</legend>";
-    content+= "SSID:<br><input type='text' name='SSID' style='height:20px; width:80px' placeholder='SSID'><br>";
-    content+= "Password:<br><input type='password' name='PASSWORD' style='height:20px; width:80px' placeholder='password'><br></fieldset>";
+    content+= "SSID:<br><input type='text' name='SSID' style='height:20px; width:80px' value='"+ssi +"'><br>";
+    content+= "Password:<br><input type='password' name='PASSWORD' style='height:20px; width:80px'  value='"+pwd+"'><br></fieldset>";
     content+="<fieldset> <legend>Mount parameters:</legend>";
-    content+= "RA steps/rev:<br><input type='number'   name='MAXCOUNTER' style='height:20px; width:80px'  placeholder='Gear' value ='" + String(telescope->azmotor->maxcounter) + "'><br>";
-    content+= "DEC steps/rev:<br><input type='number' name='MAXCOUNTER_ALT' style='height:20px; width:80px' placeholder='Gear' value ='" + String(telescope->altmotor->maxcounter) + "'><br>";
-    content+= "Guide rate:<br><input type='number' step='any' name='GUIDE'style='height:20px; width:50px'  placeholder='GUIDE' value ='" + String(telescope->rate[0]) + "'><br>";
-    content+= "Center rate:<br><input type='number' name='CENTER' style='height:20px; width:50px'placeholder='CENTER' value ='" + String(telescope->rate[1]) + "'><br>";
-    content+= "Find rate:<br><input type='number' name='FIND' style='height:20px; width:50px' placeholder='FIND' value ='" + String(telescope->rate[2]) + "'><br>";
-    content+= "Slew rate:<br><input type='number' name='SLEW' style='height:20px; width:50px'placeholder='SLEW' value ='" + String(telescope->rate[3]) + "'><br></fieldset>";
+    content+= "RA steps/rev:<br><input type='number'   name='MAXCOUNTER' style='height:20px; width:80px' value ='" + String(telescope->azmotor->maxcounter) + "'><br>";
+    content+= "DEC steps/rev:<br><input type='number' name='MAXCOUNTER_ALT' style='height:20px; width:80px' value ='" + String(telescope->altmotor->maxcounter) + "'><br>";
+    content+= "Guide rate:<br><input type='number' step='any' name='GUIDE'style='height:20px; width:50px' value ='" + String(telescope->rate[0]) + "'><br>";
+    content+= "Center rate:<br><input type='number' name='CENTER' style='height:20px; width:50px' value ='" + String(telescope->rate[1]) + "'><br>";
+    content+= "Find rate:<br><input type='number' name='FIND' style='height:20px; width:50px' value ='" + String(telescope->rate[2]) + "'><br>";
+    content+= "Slew rate:<br><input type='number' name='SLEW' style='height:20px; width:50px' value ='" + String(telescope->rate[3]) + "'><br></fieldset>";
     content+="<fieldset> <legend>Geodata</legend>";
-    content+= "Longitude:<br><input type='number' step='any' name='LONGITUDE' style='height:20px; width:80px'  placeholder='Long' value ='" + String(telescope->longitude) + "'><br>";
-    content+= "Latitude:<br><input type='number'step='any' name='LATITUDE' style='height:20px; width:80px' placeholder='Lat' value ='" + String(telescope->lat) + "'><br>";
-    content+= "GMT offset:<br><input type='number'step='any' name='TIMEZONE' style='height:20px; width:30px'  placeholder='TZ' value ='" + String(telescope->time_zone) + "'><br>";
+    content+= "Longitude:<br><input type='number' step='any' name='LONGITUDE' style='height:20px; width:80px' value ='" + String(telescope->longitude) + "'><br>";
+    content+= "Latitude:<br><input type='number'step='any' name='LATITUDE' style='height:20px; width:80px' value ='" + String(telescope->lat) + "'><br>";
+    content+= "GMT offset:<br><input type='number'step='any' name='TIMEZONE' style='height:20px; width:30px' value ='" + String(telescope->time_zone) + "'><br>";
     content+= "<input type='submit' name='SUBMIT' value='Submit'></fieldset></form>" + msg + "<br>";
     content+= " </body></html>";
     serverweb.send(200, "text/html", content);

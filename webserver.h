@@ -6,6 +6,8 @@
 
 extern ESP8266WebServer serverweb;
 extern mount_t *telescope;
+extern String ssi;
+extern String pwd;
 //void handleConfig();
 //String getContentType(String filename);
 //bool handleFileRead(String path);

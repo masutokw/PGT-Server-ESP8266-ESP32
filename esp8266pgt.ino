@@ -13,10 +13,12 @@
 #define SPEED_CONTROL_TICKER 10
 #define COUNTERS_POLL_TICKER 100
 #include <FS.h>
+
+//#define OLED_DISPLAY
+//comment wifipass.h and uncomment for yor wifi parameters
 #include "wifipass.h"
-#define OLED_DISPLAY
-//const char* ssid = "MyWIFI";
-//const char* password = "Mypassword";
+const char* ssid = "MyWIFI";
+const char* password = "Mypassword";
 extern picmsg  msg;
 extern volatile int state;
 WiFiServer server(10001);
@@ -25,6 +27,8 @@ ESP8266WebServer serverweb(80);
 char buff[50] = "Waiting for connection..";
 extern char  response[200];
 mount_t *telescope;
+String ssi;
+String pwd;
 Ticker speed_control_tckr, counters_poll_tkr;
 extern long command( char *str );
 time_t now;
@@ -51,6 +55,8 @@ void oledDisplay()
     display.drawString(0, 42,String(de));// ctime(&now));
     display.drawString(0, 22, "MA:" + String(telescope->azmotor->counter) + " MD:" + String(telescope->altmotor->counter));
     display.drawString(0, 32, "Dt:" + String(state));//(telescope->azmotor->slewing));
+    //unsigned int n= pwd.length();
+    //display.drawString(0, 32,String(pw)+ " "+ String(n));
     display.drawString(0, 52,ctime(&now));
     display.display();
 }
@@ -137,17 +143,33 @@ void setup()
 
 
 #endif
-
-    SPIFFS.begin();
     WiFi.mode(WIFI_AP_STA);
-    WiFi.softAP("PGT_ESP","potatoes");
-    WiFi.begin(ssid, password);
+    WiFi.softAP("PGT_ESP","boquerones");
+    SPIFFS.begin();
+    File f = SPIFFS.open("/wifi.config", "r");
+    if (f)
+    {
+        ssi=f.readStringUntil('\n');
+        pwd=f.readStringUntil('\n');
+        f.close();
+        char  ss [ssi.length()+1];
+        char  pw [pwd.length()+1];
+        ssi.toCharArray(ss,ssi.length()+1);
+        pwd.toCharArray(pw,pwd.length()+1);
+        pw[pwd.length()+1]=0;
+        ss[ssi.length()+1]=0;
+
+        WiFi.begin((const char*)ss,(const char*)pw);
+    }
+    else  WiFi.begin(ssid,password);
+
+
     delay(500);
     uint8_t i = 0;
     while (WiFi.status() != WL_CONNECTED && i++ < 20) delay(500);
     if (i == 21)
     {
-        while (1) delay(500);
+        //     while (1) delay(500);
     }
 #ifdef OLED_DISPLAY
     oled_waitscr();
@@ -169,7 +191,7 @@ void setup()
     sdt_init(telescope->longitude,telescope->time_zone);
     speed_control_tckr.attach_ms(SPEED_CONTROL_TICKER, thread_motor, telescope);
     counters_poll_tkr.attach_ms(COUNTERS_POLL_TICKER, thread_counter, telescope);
- #ifdef OLED_DISPLAY
+#ifdef OLED_DISPLAY
     pad_Init();
 #endif // OLED_DISPLAY
 

@@ -246,7 +246,7 @@ void mount_lxde_str(char* message,mount_t *mt)
 int readconfig(mount_t *mt)
 {
     int maxcounter,maxcounteralt ;
-    File f = SPIFFS.open("mount.config", "r");
+    File f = SPIFFS.open("/mount.config", "r");
     if (!f) return -1;
     String s=f.readStringUntil('\n');
     maxcounter=s.toInt();
