@@ -99,6 +99,7 @@ bool handleFileRead(String path)
 void initwebserver(void)
 {
     serverweb.on("/config", handleConfig);
+   // serverweb.on("/formatfilesystem",handleFormat)
     serverweb.onNotFound([]()
     {
         if (!handleFileRead(serverweb.uri()))

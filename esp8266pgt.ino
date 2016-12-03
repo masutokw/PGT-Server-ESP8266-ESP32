@@ -14,11 +14,11 @@
 #define COUNTERS_POLL_TICKER 100
 #include <FS.h>
 
-//#define OLED_DISPLAY
-//comment wifipass.h and uncomment for yor wifi parameters
+#define OLED_DISPLAY
+//comment wifipass.h and uncomment for your  wifi parameters
 #include "wifipass.h"
-const char* ssid = "MyWIFI";
-const char* password = "Mypassword";
+//const char* ssid = "MyWIFI";
+//const char* password = "Mypassword";
 extern picmsg  msg;
 extern volatile int state;
 WiFiServer server(10001);
@@ -30,6 +30,7 @@ mount_t *telescope;
 String ssi;
 String pwd;
 Ticker speed_control_tckr, counters_poll_tkr;
+
 extern long command( char *str );
 time_t now;
 #ifdef OLED_DISPLAY
@@ -54,7 +55,7 @@ void oledDisplay()
     lxprintde(de,telescope->azmotor->delta);
     display.drawString(0, 42,String(de));// ctime(&now));
     display.drawString(0, 22, "MA:" + String(telescope->azmotor->counter) + " MD:" + String(telescope->altmotor->counter));
-    display.drawString(0, 32, "Dt:" + String(state));//(telescope->azmotor->slewing));
+    display.drawString(0, 32, "Dt:" + String(digitalRead(16)));//(telescope->azmotor->slewing));
     //unsigned int n= pwd.length();
     //display.drawString(0, 32,String(pw)+ " "+ String(n));
     display.drawString(0, 52,ctime(&now));
@@ -144,7 +145,7 @@ void setup()
 
 #endif
     WiFi.mode(WIFI_AP_STA);
-    WiFi.softAP("PGT_ESP","boquerones");
+    WiFi.softAP("PGT_ESP07","boquerones");
     SPIFFS.begin();
     File f = SPIFFS.open("/wifi.config", "r");
     if (f)
@@ -178,7 +179,7 @@ void setup()
     //start UART and the server
     Serial.begin(BAUDRATE);
 #ifdef OLED_DISPLAY
-    Serial.swap();
+   // Serial.swap();
 #endif
     //
     server.begin();

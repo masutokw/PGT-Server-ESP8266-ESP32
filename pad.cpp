@@ -1,45 +1,109 @@
 #include "pad.h"
 #include "mount.h"
-#define SEC_TO_RAD (M_PI/(3600.0*180.0))
-#define SID_RATE 15.04106711786691
 extern mount_t *telescope;
-volatile int state;
-volatile int event=3;
-volatile long lastDebounceTime = 0;
+volatile int state[4]= {1,1,1,1};
+volatile int event[4]= {3,3,3,3};
+volatile long lastDebounceTime[4] = {0,0,0,0};
 const int debounceDelay = 50;
-int bpin= 2;
-void pad_Init(void){
-    pinMode(bpin, INPUT);
-     attachInterrupt(bpin, onChange, CHANGE);
-}
-void onChange() {
-  // Get the pin reading.
-  int reading = digitalRead(bpin);
+int bpin[4]= {2,0,4,5};
 
-  // Ignore dupe readings.
-  if(reading == state) return;
 
-  boolean debounce = false;
-
-  // Check to see if the change is within a debounce delay threshold.
-  if((millis() - lastDebounceTime) <= debounceDelay) {
-    debounce = true;
-  }
-  // This update to the last debounce check is necessary regardless of debounce state.
-  lastDebounceTime = millis();
-  // Ignore reads within a debounce delay threshold.
-  if(debounce) return;
-  // All is good, persist the reading as the state.
-  state = reading;
-  event =state;
-  // Work with the value now.
-//  Serial.println("button: " + String(reading));
-}
-void doEvent(void){
- switch (event)
+void onChange(int b)
+{
+    int reading = digitalRead(bpin[b]);
+    if(reading == state[b]) return;
+    boolean debounce = false;
+    if((millis() - lastDebounceTime[b]) <= debounceDelay)
     {
-       case  0:telescope->altmotor->targetspeed=SID_RATE*100*SEC_TO_RAD;event=3;
+        debounce = true;
+    }
+    lastDebounceTime[b] = millis();
+    if(debounce) return;
+    state[b] = reading;
+    event[b] =state[b];
+
+}
+void onChange_North(void)
+{
+    onChange(0);
+}
+void onChange_South(void)
+{
+    onChange(1);
+}
+void onChange_West(void)
+{
+    onChange(2);
+}
+void onChange_East(void)
+{
+    onChange(3);
+}
+void doEvent(void)
+{
+    int n;
+
+    switch (event[0])
+    {
+    case  0:
+       if (digitalRead(16)) mount_move(telescope,'n');
+       else telescope->srate=(telescope->srate+1)%4;
+        event[0]=3;
         break;
-        case 1:telescope->altmotor->targetspeed=0;event=3;
+    case 1:
+        if (digitalRead(16)) mount_stop(telescope,'n');
+        event[0]=3;
         break;
-    }}
+    }
+
+    switch (event[1])
+    {
+    case  0:
+        mount_move(telescope,'s');
+        event[1]=3;
+        break;
+    case 1:
+        mount_stop(telescope,'s');
+        event[1]=3;
+        break;
+    }
+    switch (event[2])
+    {
+    case  0:
+        mount_move(telescope,'w');
+        event[2]=3;
+        break;
+    case 1:
+        mount_stop(telescope,'w');
+        event[2]=3;
+        break;
+    }
+
+    switch (event[3])
+    {
+    case  0:
+        mount_move(telescope,'e');
+        event[3]=3;
+        break;
+    case 1:
+        mount_stop(telescope,'e');
+        event[3]=3;
+        break;
+    }
+
+}
+
+void pad_Init(void)
+{
+    pinMode(bpin[0], INPUT_PULLUP);
+    pinMode(bpin[1], INPUT_PULLUP);
+    pinMode(bpin[2], INPUT_PULLUP);
+    pinMode(bpin[3], INPUT_PULLUP);
+    pinMode(16,INPUT_PULLUP);
+    attachInterrupt(bpin[0], onChange_North, CHANGE);
+    attachInterrupt(bpin[1], onChange_South, CHANGE);
+    attachInterrupt(bpin[2], onChange_West, CHANGE);
+    attachInterrupt(bpin[3], onChange_East, CHANGE);
+
+}
+
