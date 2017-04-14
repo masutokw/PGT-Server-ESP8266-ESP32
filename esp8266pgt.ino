@@ -14,7 +14,7 @@
 #define COUNTERS_POLL_TICKER 100
 #include <FS.h>
 
-#define OLED_DISPLAY
+//#define OLED_DISPLAY
 //comment wifipass.h and uncomment for your  wifi parameters
 #include "wifipass.h"
 //const char* ssid = "MyWIFI";
@@ -35,8 +35,11 @@ extern long command( char *str );
 time_t now;
 #ifdef OLED_DISPLAY
 #include "SSD1306.h"
+//#include "SH1106.h"
+
 #include "pad.h"
-SSD1306  display(0x3c, D5, D6);
+//SSD1306 
+SH1106 display(0x3c, D5, D6);
 
 void oledDisplay()
 {
@@ -47,25 +50,25 @@ void oledDisplay()
     // display.drawString (0, 0, "ESP-8266 PicGoto++ 0.1");
     // display.drawString(0, 13, String(buff) + "  " + String(response));
     lxprintra(ra,sidereal_timeGMT_alt(telescope->longitude)*15.0*DEG_TO_RAD);
-    display.drawString(0, 13,"LST " + String(ra));
+    display.drawString(0, 9,"LST " + String(ra));
     lxprintra(ra,calc_Ra(telescope->azmotor->pos_angle,telescope->longitude));
     lxprintde(de,telescope->altmotor->pos_angle);
 
-    display.drawString(0, 2,"RA:"+String(ra)+" DE:"+String(de));
+    display.drawString(0, 50,"RA:"+String(ra)+" DE:"+String(de));
     lxprintde(de,telescope->azmotor->delta);
-    display.drawString(0, 42,String(de));// ctime(&now));
-    display.drawString(0, 22, "MA:" + String(telescope->azmotor->counter) + " MD:" + String(telescope->altmotor->counter));
-    display.drawString(0, 32, "Dt:" + String(digitalRead(16)));//(telescope->azmotor->slewing));
+    display.drawString(0, 36,String(de));// ctime(&now));
+    display.drawString(0, 18, "MA:" + String(telescope->azmotor->counter) + " MD:" + String(telescope->altmotor->counter));
+    display.drawString(0, 27, "Dt:" + String(digitalRead(16)));//(telescope->azmotor->slewing));
     //unsigned int n= pwd.length();
     //display.drawString(0, 32,String(pw)+ " "+ String(n));
-    display.drawString(0, 52,ctime(&now));
+    display.drawString(0, 0,ctime(&now));
     display.display();
 }
 void oled_initscr(void)
 
 {
     display.init();
-    display.flipScreenVertically();
+  //  display.flipScreenVertically();
     display.setFont(ArialMT_Plain_10);
     display.setTextAlignment(TEXT_ALIGN_LEFT);
     display.clear();
@@ -145,7 +148,7 @@ void setup()
 
 #endif
     WiFi.mode(WIFI_AP_STA);
-    WiFi.softAP("PGT_ESP07","boquerones");
+    WiFi.softAP("PGT_ESP","boquerones");
     SPIFFS.begin();
     File f = SPIFFS.open("/wifi.config", "r");
     if (f)
@@ -179,7 +182,7 @@ void setup()
     //start UART and the server
     Serial.begin(BAUDRATE);
 #ifdef OLED_DISPLAY
-   // Serial.swap();
+    Serial.swap();
 #endif
     //
     server.begin();

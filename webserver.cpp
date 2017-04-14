@@ -44,6 +44,7 @@ void handleConfig()
         msg+="\n"+serverweb.arg("CENTER");
         msg+="\n"+serverweb.arg("FIND");
         msg+="\n"+serverweb.arg("SLEW");
+        msg+="\n"+serverweb.arg("PRESCALER");
         msg+="\n"+serverweb.arg("LONGITUDE");
         msg+="\n"+serverweb.arg("LATITUDE");
         msg+="\n"+serverweb.arg("TIMEZONE")+"\n";
@@ -70,7 +71,8 @@ void handleConfig()
     content+= "Guide rate:<br><input type='number' step='any' name='GUIDE'style='height:20px; width:50px' value ='" + String(telescope->rate[0]) + "'><br>";
     content+= "Center rate:<br><input type='number' name='CENTER' style='height:20px; width:50px' value ='" + String(telescope->rate[1]) + "'><br>";
     content+= "Find rate:<br><input type='number' name='FIND' style='height:20px; width:50px' value ='" + String(telescope->rate[2]) + "'><br>";
-    content+= "Slew rate:<br><input type='number' name='SLEW' style='height:20px; width:50px' value ='" + String(telescope->rate[3]) + "'><br></fieldset>";
+    content+= "Slew rate:<br><input type='number' name='SLEW' style='height:20px; width:50px' value ='" + String(telescope->rate[3]) + "'><br>";
+    content+= "Prescaler:<br><input type='number' name='PRESCALER' style='height:20px; width:50px' value ='" + String(telescope->prescaler) + "'><br></fieldset>";
     content+="<fieldset> <legend>Geodata</legend>";
     content+= "Longitude:<br><input type='number' step='any' name='LONGITUDE' style='height:20px; width:80px' value ='" + String(telescope->longitude) + "'><br>";
     content+= "Latitude:<br><input type='number'step='any' name='LATITUDE' style='height:20px; width:80px' value ='" + String(telescope->lat) + "'><br>";

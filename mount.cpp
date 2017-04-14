@@ -22,8 +22,10 @@ mount_t* create_mount(void)
     m->longitude = LOCAL_LONGITUDE;
     m->lat = LOCAL_LATITUDE;
     m->time_zone = TIME_ZONE;
-    init_motor( m->azmotor, AZ_ID, maxcounter,SID_RATE * SEC_TO_RAD);
-    init_motor( m->altmotor,  ALT_ID, maxcounteralt,0);
+    m->prescaler=0.4;
+    init_motor( m->azmotor, AZ_ID, maxcounter,SID_RATE * SEC_TO_RAD,m->prescaler);
+    init_motor( m->altmotor,  ALT_ID, maxcounteralt,0,m->prescaler);
+    
     return m;
 }
 
@@ -259,13 +261,17 @@ int readconfig(mount_t *mt)
     }
     mt->srate = 0;
     mt->maxspeed = (mt->rate[3] * SID_RATE * SEC_TO_RAD);
+     s=f.readStringUntil('\n');
+    mt->prescaler=s.toFloat();
+    if ((mt->prescaler <0.3)|| (mt->prescaler >2.0)) mt->prescaler=0.4;
     s=f.readStringUntil('\n');
     mt->longitude = s.toFloat();
     s=f.readStringUntil('\n');
     mt->lat = s.toFloat();
-    mt->time_zone = TIME_ZONE;
-    init_motor( mt->azmotor, AZ_ID, maxcounter,SID_RATE * SEC_TO_RAD);
-    init_motor( mt->altmotor,  ALT_ID, maxcounteralt,0);
+     s=f.readStringUntil('\n');
+    mt->time_zone = s.toFloat();
+    init_motor( mt->azmotor, AZ_ID, maxcounter,SID_RATE * SEC_TO_RAD,mt->prescaler);
+    init_motor( mt->altmotor,  ALT_ID, maxcounteralt,0,mt->prescaler);
     return 0;
 
 
