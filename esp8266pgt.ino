@@ -8,6 +8,12 @@
 #include "piclevel.h"
 #include "mount.h"
 #include "webserver.h"
+#define NUNCHUCK_CONTROL
+
+#ifdef  NUNCHUCK_CONTROL
+#include "nunchuck.h"
+#endif
+
 #define BAUDRATE 19200
 #define MAX_SRV_CLIENTS 3
 #define SPEED_CONTROL_TICKER 10
@@ -38,51 +44,53 @@ time_t now;
 //#include "SH1106.h"
 
 #include "pad.h"
-//SSD1306 
-SH1106 display(0x3c, D5, D6);
+//SSD1306
+SSD1306 display(0x3c, D5, D6);
 
 void oledDisplay()
 {
-    char ra[20]="";
-    char de[20]="";
-    //write some information for debuging purpose to OLED display.
-    display.clear();
-    // display.drawString (0, 0, "ESP-8266 PicGoto++ 0.1");
-    // display.drawString(0, 13, String(buff) + "  " + String(response));
-    lxprintra(ra,sidereal_timeGMT_alt(telescope->longitude)*15.0*DEG_TO_RAD);
-    display.drawString(0, 9,"LST " + String(ra));
-    lxprintra(ra,calc_Ra(telescope->azmotor->pos_angle,telescope->longitude));
-    lxprintde(de,telescope->altmotor->pos_angle);
+  char ra[20] = "";
+  char de[20] = "";
+  //write some information for debuging purpose to OLED display.
+  display.clear();
+  // display.drawString (0, 0, "ESP-8266 PicGoto++ 0.1");
+  // display.drawString(0, 13, String(buff) + "  " + String(response));
+  lxprintra(ra, sidereal_timeGMT_alt(telescope->longitude) * 15.0 * DEG_TO_RAD);
+  display.drawString(0, 9, "LST " + String(ra));
+  lxprintra(ra, calc_Ra(telescope->azmotor->pos_angle, telescope->longitude));
+  lxprintde(de, telescope->altmotor->pos_angle);
 
-    display.drawString(0, 50,"RA:"+String(ra)+" DE:"+String(de));
-    lxprintde(de,telescope->azmotor->delta);
-    display.drawString(0, 36,String(de));// ctime(&now));
-    display.drawString(0, 18, "MA:" + String(telescope->azmotor->counter) + " MD:" + String(telescope->altmotor->counter));
-    display.drawString(0, 27, "Dt:" + String(digitalRead(16)));//(telescope->azmotor->slewing));
-    //unsigned int n= pwd.length();
-    //display.drawString(0, 32,String(pw)+ " "+ String(n));
-    display.drawString(0, 0,ctime(&now));
-    display.display();
+  display.drawString(0, 50, "RA:" + String(ra) + " DE:" + String(de));
+  lxprintde(de, telescope->azmotor->delta);
+  display.drawString(0, 36, String(de)); // ctime(&now));
+  display.drawString(0, 18, "MA:" + String(telescope->azmotor->counter) + " MD:" + String(telescope->altmotor->counter));
+  display.drawString(0, 27, "Dt:" + String(digitalRead(16)));//(telescope->azmotor->slewing));
+  //unsigned int n= pwd.length();
+  //display.drawString(0, 32,String(pw)+ " "+ String(n));
+  display.drawString(0, 0, ctime(&now));
+  display.display();
 }
 void oled_initscr(void)
 
 {
-    display.init();
+  display.init();
   //  display.flipScreenVertically();
-    display.setFont(ArialMT_Plain_10);
-    display.setTextAlignment(TEXT_ALIGN_LEFT);
-    display.clear();
-    display.drawString(0, 0, "Connecting to " + String(ssid));
-    display.display();
+  display.setFont(ArialMT_Plain_10);
+  display.setTextAlignment(TEXT_ALIGN_LEFT);
+  display.clear();
+  display.drawString(0, 0, "Connecting to " + String(ssid));
+  display.display();
 }
 
 void oled_waitscr(void)
 {
-    display.clear();
-    display.drawString(0, 0, "Connecting to " + String(ssid));
-    display.drawString(0, 13, "Got IP! :" + String(WiFi.localIP()));
-    display.drawString(0, 26, "Waiting for Client");
-    display.display();
+  display.clear();
+  display.drawString(0, 0, "Connecting to " + String(ssid));
+  IPAddress ip = WiFi.localIP();
+  String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
+  display.drawString(0, 13, "Got IP! :" + ipStr);
+  display.drawString(0, 26, "Waiting for Client");
+  display.display();
 }
 
 
@@ -91,126 +99,137 @@ void oled_waitscr(void)
 
 int net_task(void)
 {
-    int lag = millis();
-    size_t n;
-    uint8_t i;
-    //Sky Safari does not make a persistent connection, so each commnad query is managed as a single independent client.
-    if (server.hasClient())
-    {
-        for (i = 0; i < MAX_SRV_CLIENTS; i++)
-        {
-            //find free/disconnected spot
-            if (!serverClients[i] || !serverClients[i].connected())
-            {
-                if (serverClients[i]) serverClients[i].stop();
-                serverClients[i] = server.available();
-                continue;
-            }
-        }
-        //Only one client at time, so reject
-        WiFiClient serverClient = server.available();
-        serverClient.stop();
-    }
-    //check clients for data
+  int lag = millis();
+  size_t n;
+  uint8_t i;
+  //Sky Safari does not make a persistent connection, so each commnad query is managed as a single independent client.
+  if (server.hasClient())
+  {
     for (i = 0; i < MAX_SRV_CLIENTS; i++)
     {
-        if (serverClients[i] && serverClients[i].connected())
-        {
-            if (serverClients[i].available())
-            {
-                //get data from the  client and push it to LX200 FSM
-
-                while (serverClients[i].available())
-                {
-                    delay(1);
-                    size_t n = serverClients[i].available();
-                    serverClients[i].readBytes(buff, n);
-                    command( buff);
-                    buff[n] = 0;
-                    serverClients[i].write((char*)response, strlen(response));
-
-                    //checkfsm();
-                }
-
-            }
-        }
+      //find free/disconnected spot
+      if (!serverClients[i] || !serverClients[i].connected())
+      {
+        if (serverClients[i]) serverClients[i].stop();
+        serverClients[i] = server.available();
+        continue;
+      }
     }
-    return millis()-lag;
+    //Only one client at time, so reject
+    WiFiClient serverClient = server.available();
+    serverClient.stop();
+  }
+  //check clients for data
+  for (i = 0; i < MAX_SRV_CLIENTS; i++)
+  {
+    if (serverClients[i] && serverClients[i].connected())
+    {
+      if (serverClients[i].available())
+      {
+        //get data from the  client and push it to LX200 FSM
+
+        while (serverClients[i].available())
+        {
+          delay(1);
+          size_t n = serverClients[i].available();
+          serverClients[i].readBytes(buff, n);
+          command( buff);
+          buff[n] = 0;
+          serverClients[i].write((char*)response, strlen(response));
+
+          //checkfsm();
+        }
+
+      }
+    }
+  }
+  return millis() - lag;
 }
 
 void setup()
 {
 
 #ifdef OLED_DISPLAY
-    oled_initscr();
+  oled_initscr();
 
 
 
 #endif
-    WiFi.mode(WIFI_AP_STA);
-    WiFi.softAP("PGT_ESP","boquerones");
-    SPIFFS.begin();
-    File f = SPIFFS.open("/wifi.config", "r");
-    if (f)
-    {
-        ssi=f.readStringUntil('\n');
-        pwd=f.readStringUntil('\n');
-        f.close();
-        char  ss [ssi.length()+1];
-        char  pw [pwd.length()+1];
-        ssi.toCharArray(ss,ssi.length()+1);
-        pwd.toCharArray(pw,pwd.length()+1);
-        pw[pwd.length()+1]=0;
-        ss[ssi.length()+1]=0;
 
-        WiFi.begin((const char*)ss,(const char*)pw);
-    }
-    else  WiFi.begin(ssid,password);
-
-
-    delay(500);
-    uint8_t i = 0;
-    while (WiFi.status() != WL_CONNECTED && i++ < 20) delay(500);
-    if (i == 21)
-    {
-        //     while (1) delay(500);
-    }
-#ifdef OLED_DISPLAY
-    oled_waitscr();
+#ifdef NUNCHUCK_CONTROL
+ // nunchuck_init(D6, D5);
+  nunchuck_init(2, 0);
+ 
 #endif
 
-    //start UART and the server
-    Serial.begin(BAUDRATE);
+  WiFi.mode(WIFI_AP_STA);
+  WiFi.softAP("PGT_ESP", "boquerones");
+  SPIFFS.begin();
+  File f = SPIFFS.open("/wifi.config", "r");
+  if (f)
+  {
+    ssi = f.readStringUntil('\n');
+    pwd = f.readStringUntil('\n');
+    f.close();
+    char  ss [ssi.length() + 1];
+    char  pw [pwd.length() + 1];
+    ssi.toCharArray(ss, ssi.length() + 1);
+    pwd.toCharArray(pw, pwd.length() + 1);
+    pw[pwd.length() + 1] = 0;
+    ss[ssi.length() + 1] = 0;
+
+    WiFi.begin((const char*)ss, (const char*)pw);
+  }
+  else  WiFi.begin(ssid, password);
+
+
+  delay(500);
+  uint8_t i = 0;
+  while (WiFi.status() != WL_CONNECTED && i++ < 20) delay(500);
+  if (i == 21)
+  {
+    //     while (1) delay(500);
+  }
 #ifdef OLED_DISPLAY
-    Serial.swap();
+  oled_waitscr();
 #endif
-    //
-    server.begin();
-    server.setNoDelay(true);
-    telescope = create_mount();
-    readconfig(telescope);
-    config_NTP(telescope->time_zone, 0);
-    initwebserver();
-    delay (2000) ;
-    sdt_init(telescope->longitude,telescope->time_zone);
-    speed_control_tckr.attach_ms(SPEED_CONTROL_TICKER, thread_motor, telescope);
-    counters_poll_tkr.attach_ms(COUNTERS_POLL_TICKER, thread_counter, telescope);
+
+  //start UART and the server
+  Serial.begin(BAUDRATE);
 #ifdef OLED_DISPLAY
-    pad_Init();
+  Serial.swap();
+#endif
+  //
+  server.begin();
+  server.setNoDelay(true);
+  telescope = create_mount();
+  readconfig(telescope);
+  config_NTP(telescope->time_zone, 0);
+  initwebserver();
+  delay (2000) ;
+  sdt_init(telescope->longitude, telescope->time_zone);
+  speed_control_tckr.attach_ms(SPEED_CONTROL_TICKER, thread_motor, telescope);
+  counters_poll_tkr.attach_ms(COUNTERS_POLL_TICKER, thread_counter, telescope);
+#ifdef OLED_DISPLAY
+  pad_Init();
 #endif // OLED_DISPLAY
 
 }
 
 void loop()
 {
-    delay(10);
-    net_task();
-    now=time(nullptr);
-    serverweb.handleClient();
+  delay(10);
+  net_task();
+  now = time(nullptr);
+  serverweb.handleClient();
+
+#ifdef  NUNCHUCK_CONTROL
+  nunchuck_read() ;
+#endif
 
 #ifdef OLED_DISPLAY
-    doEvent();
-    oledDisplay();
+  doEvent();
+  oledDisplay();
 #endif
 
 }
