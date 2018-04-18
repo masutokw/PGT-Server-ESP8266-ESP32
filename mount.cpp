@@ -276,3 +276,15 @@ int readconfig(mount_t *mt)
 
 
 }
+void mount_park(mount_t *mt)
+
+{
+   mt->altmotor->slewing= mt->azmotor->slewing=FALSE;
+   mt->altmotor->targetspeed = 0.0;
+   mt->azmotor->targetspeed = 0.0;
+   delay(100);
+  save_counters(ALT_ID);
+  delay(10); 
+  save_counters(AZ_ID);
+   delay(10); 
+}

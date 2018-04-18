@@ -8,8 +8,8 @@
 #include "piclevel.h"
 #include "mount.h"
 #include "webserver.h"
-#define NUNCHUCK_CONTROL
-
+//#define NUNCHUCK_CONTROL
+//#define FIXED_IP
 #ifdef  NUNCHUCK_CONTROL
 #include "nunchuck.h"
 #endif
@@ -22,9 +22,9 @@
 
 //#define OLED_DISPLAY
 //comment wifipass.h and uncomment for your  wifi parameters
-#include "wifipass.h"
-//const char* ssid = "MyWIFI";
-//const char* password = "Mypassword";
+//#include "wifipass.h"
+const char* ssid = "MyWIFI";
+const char* password = "Mypassword";
 extern picmsg  msg;
 extern volatile int state;
 WiFiServer server(10001);
@@ -157,9 +157,9 @@ void setup()
 #endif
 
 #ifdef NUNCHUCK_CONTROL
- // nunchuck_init(D6, D5);
+  // nunchuck_init(D6, D5);
   nunchuck_init(2, 0);
- 
+
 #endif
 
   WiFi.mode(WIFI_AP_STA);
@@ -181,7 +181,13 @@ void setup()
     WiFi.begin((const char*)ss, (const char*)pw);
   }
   else  WiFi.begin(ssid, password);
-
+#ifdef FIXED_IP
+  IPAddress ip(192, 168, 0, 14);
+  IPAddress gateway(192, 168, 0, 1);
+  IPAddress subnet(255, 255, 255, 0);
+ // IPAddress DNS(8, 8, 8, 8);
+  WiFi.config(ip, gateway, subnet);
+#endif
 
   delay(500);
   uint8_t i = 0;
@@ -197,7 +203,7 @@ void setup()
   //start UART and the server
   Serial.begin(BAUDRATE);
 #ifdef OLED_DISPLAY
-  Serial.swap();
+  // Serial.swap();
 #endif
   //
   server.begin();

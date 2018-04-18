@@ -13,17 +13,18 @@ int sign(double t)
 
 }
 
-void init_motor(motor_t* mt,char ref,int maxcounter,double spd)
+void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick)
 {
     mt->speed=0;
     mt->targetspeed=spd;
     mt->pos_angle=0;
-    mt->timertick= TIM_TICK;
+    mt->timertick= tick*1e-6;
     mt->maxcounter=maxcounter;//8000*6*180;//
     mt->resolution=(2.0* M_PI) /mt->maxcounter;
     mt->acceleration=6e-4;
     mt->id=ref;
     mt->slewing=0;
+    set_motor_max_counter(ref, maxcounter);
 }
 
 void setspeed(motor_t* mt ,double tspeed)
@@ -102,3 +103,10 @@ void  setcounter(motor_t* mt,int count)
 }
 
 void  loadconf(motor_t* mt,char* name) {}
+
+
+void  savemotorcounter(motor_t* mt)
+{
+  save_counters (mt->id);
+}
+

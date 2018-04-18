@@ -29,6 +29,7 @@ typedef struct
     double alt_target,az_target;
     double lat,longitude;
     double rate[4];
+    double prescaler;
     double maxspeed;
     int srate;
     int track;
@@ -50,4 +51,5 @@ int get_pierside(mount_t *mt);
 void eq_to_enc(double *ra,double *dec,double a,double  b,int pier);
 void mount_lxde_str(char* message,mount_t *mt);
 void mount_lxra_str(char *message,mount_t *mt);
+void mount_park(mount_t *mt);
 #endif
