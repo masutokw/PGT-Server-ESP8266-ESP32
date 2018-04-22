@@ -8,7 +8,7 @@
 #include "piclevel.h"
 #include "mount.h"
 #include "webserver.h"
-//#define NUNCHUCK_CONTROL
+#define NUNCHUCK_CONTROL
 //#define FIXED_IP
 #ifdef  NUNCHUCK_CONTROL
 #include "nunchuck.h"

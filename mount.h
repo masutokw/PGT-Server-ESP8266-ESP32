@@ -28,9 +28,9 @@ typedef struct
     double dec_target,ra_target;//radians
     double alt_target,az_target;
     double lat,longitude;
-    double rate[4];
+    double rate[4][2];
     double prescaler;
-    double maxspeed;
+    double maxspeed[2];
     int srate;
     int track;
     int time_zone;

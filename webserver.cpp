@@ -55,12 +55,18 @@ void handleConfig()
         msg+="\n"+serverweb.arg("CENTER");
         msg+="\n"+serverweb.arg("FIND");
         msg+="\n"+serverweb.arg("SLEW");
+         msg+="\n"+serverweb.arg("GUIDEA");
+        msg+="\n"+serverweb.arg("CENTERA");
+        msg+="\n"+serverweb.arg("FINDA");
+        msg+="\n"+serverweb.arg("SLEWA");
         msg+="\n"+serverweb.arg("PRESCALER");
         msg+="\n"+serverweb.arg("LONGITUDE");
         msg+="\n"+serverweb.arg("LATITUDE");
         msg+="\n"+serverweb.arg("TIMEZONE")+"\n";
         String temp=serverweb.arg("SLEW");
-        telescope->rate[3]=temp.toFloat();
+        telescope->rate[3][0]=temp.toFloat();
+        temp=serverweb.arg("SLEWA");
+        telescope->rate[3][1]=temp.toFloat();
         Serial.println("Log in Failed");
 
         f = SPIFFS.open("/mount.config", "w");
@@ -76,7 +82,7 @@ void handleConfig()
   //  Jsc+="} else {x.innerHTML = \"Geolocation not\";}}";
   //  Jsc+=" function showPosition(position) {document.getElementById('lon').value =  position.coords.longitude;document.getElementById('lat').value =  position.coords.latitude;}</script>";
 
-    String content = "<html><body  bgcolor=\"#000000\" text=\"#FFFFFF\"><form action='/config' method='POST'><h2>ESP-PGT++ Config</h2>";
+    String content = "<html><body  bgcolor=\"#000000\" text=\"#FFFF00\"><form action='/config' method='POST'><h2>ESP-PGT++ Config</h2>";
    // content+=Jsc;
     content+="<button onclick=\"location.href='/park'\"  type=\"button\">Park telescope</button>";
     content+="<button onclick=\"location.href='/restart'\"  type=\"button\">Restart device</button><br>";
@@ -84,20 +90,24 @@ void handleConfig()
     content+= "SSID:<input type='text' name='SSID' style='height:20px; width:80px' value='"+ssi +"'>   ";
     content+= "Password:<input type='password' name='PASSWORD' style='height:20px; width:80px'  value='"+pwd+"'><br></fieldset>";
     content+="<fieldset style=\"width:30%\"> <legend>Mount parameters:</legend>";
-    content+= "RA   steps/rev: <input type='number' name='MAXCOUNTER' style='height:20px; width:80px' value ='" + String(telescope->azmotor->maxcounter) + "'><br>";
-    content+= "DEC steps/rev: <input type='number' name='MAXCOUNTER_ALT' style='height:20px; width:80px' value ='" + String(telescope->altmotor->maxcounter) + "'><br>";
-    content+= "Guide rate:<input type='number' step='any' name='GUIDE'style='height:20px; width:50px' value ='" + String(telescope->rate[0]) + "'><br>";
-    content+= "Center rate:<input type='number' name='CENTER' style='height:20px; width:50px' value ='" + String(telescope->rate[1]) + "'><br>";
-    content+= "Find rate:<input type='number' name='FIND' style='height:20px; width:50px' value ='" + String(telescope->rate[2]) + "'><br>";
-    content+= "Slew rate:<input type='number' name='SLEW' style='height:20px; width:50px' value ='" + String(telescope->rate[3]) + "'><br>";
-    content+= "Prescaler:<input type='number' name='PRESCALER' style='height:20px; width:50px' value ='" + String(telescope->prescaler) + "'><br></fieldset>";
+    content+= "RA   steps/rev: <input type='number' name='MAXCOUNTER' style='text-align: right;height:20px; width:80px' value ='" + String(telescope->azmotor->maxcounter) + "'><br>";
+    content+= "DEC steps/rev: <input type='number' name='MAXCOUNTER_ALT' style='text-align: right;height:20px; width:80px' value ='" + String(telescope->altmotor->maxcounter) + "'><br>AR rates<br>";
+    content+= "Guide rate:<input type='number' step='any' name='GUIDE'style='text-align: right;height:20px; width:50px' value ='" + String(telescope->rate[0][0]) + "'><br>";
+    content+= "Center rate:<input type='number' name='CENTER' style='text-align: right;height:20px; width:50px' value ='" + String(telescope->rate[1][0]) + "'><br>";
+    content+= "Find rate:<input type='number' name='FIND' style='text-align: right;height:20px; width:50px' value ='" + String(telescope->rate[2][0]) + "'><br>";
+    content+= "Slew rate:<input type='number' name='SLEW' style='text-align: right;height:20px; width:50px' value ='" + String(telescope->rate[3][0]) + "'><br>Dec<br>";
+    content+= "Guide rate:<input type='number' step='any' name='GUIDEA'style='text-align: right;height:20px; width:50px' value ='" + String(telescope->rate[0][1]) + "'><br>";
+    content+= "Center rate:<input type='number' name='CENTERA' style='text-align: right;height:20px; width:50px' value ='" + String(telescope->rate[1][1]) + "'><br>";
+    content+= "Find rate:<input type='number' name='FINDA' style='text-align: right;height:20px; width:50px' value ='" + String(telescope->rate[2][1]) + "'><br>";
+    content+= "Slew rate:<input type='number' name='SLEWA' style='text-align: right;height:20px; width:50px' value ='" + String(telescope->rate[3][1]) + "'><br>";
+    content+= "Prescaler:<input type='number' name='PRESCALER' style='text-align: right;height:20px; width:50px' value ='" + String(telescope->prescaler) + "'><br></fieldset>";
     content+="<fieldset style=\"width:30%\"> <legend>Geodata</legend>";
-    content+= "Longitude:<input type='number' step='any' id=\"lon\" name='LONGITUDE' style='height:20px; width:80px' value ='"+ 
+    content+= "Longitude:<input type='number' step='any' id=\"lon\" name='LONGITUDE' style='text-align: right;height:20px; width:80px' value ='"+ 
     String(int(telescope->longitude))+"." +String(getDecimal(telescope->longitude))+"'>   ";
-    content+= "Latitude:<input type='number'step='any' id=\"lat\" name='LATITUDE' style='height:20px; width:80px' value ='" + // String(telescope->lat) +"'><br>";
+    content+= "Latitude:<input type='number'step='any' id=\"lat\" name='LATITUDE' style='text-align: right;height:20px; width:80px' value ='" + // String(telescope->lat) +"'><br>";
     String(int(telescope->lat))+"." +String(getDecimal(telescope->lat))+"'>   ";
   //  content+= "<button onclick=\"getLocation()\">Try It</button><br>";
-    content+= "GMT offset:<input type='number'step='any' name='TIMEZONE' style='height:20px; width:30px' value ='" + String(telescope->time_zone) + "'><br>";
+    content+= "GMT offset:<input type='number'step='any' name='TIMEZONE' style='text-align: right;height:20px; width:30px' value ='" + String(telescope->time_zone) + "'><br>";
     content+= "<input type='submit' name='SUBMIT' value='Submit'></fieldset></form>" + msg + "<br>";
     content+= " </body></html>";
     serverweb.send(200, "text/html", content);

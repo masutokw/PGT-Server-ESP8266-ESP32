@@ -13,12 +13,17 @@ mount_t* create_mount(void)
     m->azmotor = (motor_t*)malloc(sizeof(motor_t));
     m->altmotor = (motor_t*)malloc(sizeof(motor_t));
     m->track = 0;
-    m->rate[3] = RATE_SLEW;
-    m->rate[2] = RATE_FIND;
-    m->rate[1] = RATE_CENTER;
-    m->rate[0] = RATE_GUIDE;
+    m->rate[3][0] = RATE_SLEW;
+    m->rate[2][0] = RATE_FIND;
+    m->rate[1][0] = RATE_CENTER;
+    m->rate[0][0] = RATE_GUIDE;
+    m->rate[3][1] = RATE_SLEW;
+    m->rate[2][1] = RATE_FIND;
+    m->rate[1][1] = RATE_CENTER;
+    m->rate[0][1] = RATE_GUIDE;
     m->srate = 0;
-    m->maxspeed = (m->rate[3] * SID_RATE * SEC_TO_RAD);
+    m->maxspeed[0] = (m->rate[3][0] * SID_RATE * SEC_TO_RAD);
+     m->maxspeed[1] = (m->rate[3][1] * SID_RATE * SEC_TO_RAD);
     m->longitude = LOCAL_LONGITUDE;
     m->lat = LOCAL_LATITUDE;
     m->time_zone = TIME_ZONE;
@@ -63,7 +68,7 @@ void thread_counter(mount_t* mt1)
 
                 if ( fabs(delta / (SEC_TO_RAD)) >= 1.0)
                 {
-                    speed = fmin(mt1->maxspeed, fabs(delta)) * sgndelta;
+                    speed = fmin(mt1->maxspeed[1], fabs(delta)) * sgndelta;
                     mt1->altmotor->targetspeed = -speed;
                 }
                 else
@@ -83,7 +88,7 @@ void thread_counter(mount_t* mt1)
                 if (fabs(delta) > (M_PI)) sgndelta = -sgndelta;
                 if ( fabs(delta / (SEC_TO_RAD)) > ARC_SEC_LMT)
                 {
-                    speed = fmin(mt1->maxspeed, fabs(delta)) * sgndelta;
+                    speed = fmin(mt1->maxspeed[0], fabs(delta)) * sgndelta;
                     mt1->azmotor->targetspeed = -(speed) + (SID_RATE * SEC_TO_RAD);
                 }
                 else
@@ -155,16 +160,16 @@ void mount_move(mount_t *mt,char dir)
     switch (dir)
     {
     case 'n':
-        mt->altmotor->targetspeed=SID_RATE*mt->rate[srate]*SEC_TO_RAD*invert;
+        mt->altmotor->targetspeed=SID_RATE*mt->rate[srate][1]*SEC_TO_RAD*invert;
         break;
     case 's':
-        mt->altmotor->targetspeed=-SID_RATE*mt->rate[srate]*SEC_TO_RAD*invert;
+        mt->altmotor->targetspeed=-SID_RATE*mt->rate[srate][1]*SEC_TO_RAD*invert;
         break;
     case 'w':
-        mt->azmotor->targetspeed= SID_RATE*(mt->rate[srate]+sid)*SEC_TO_RAD;
+        mt->azmotor->targetspeed= SID_RATE*(mt->rate[srate][0]+sid)*SEC_TO_RAD;
         break;
     case 'e':
-        mt->azmotor->targetspeed=-SID_RATE*(mt->rate[srate]-sid)*SEC_TO_RAD;
+        mt->azmotor->targetspeed=-SID_RATE*(mt->rate[srate][0]-sid)*SEC_TO_RAD;
         break;
     };
 }
@@ -254,13 +259,15 @@ int readconfig(mount_t *mt)
     maxcounter=s.toInt();
     s=f.readStringUntil('\n');
     maxcounteralt=s.toInt();
+    for (int j=0;j<2;j++)
     for (int n=0; n<4; n++)
     {
         s=f.readStringUntil('\n');
-        mt->rate[n] = s.toFloat();
-    }
+        mt->rate[n][j] = s.toFloat();
+    };
     mt->srate = 0;
-    mt->maxspeed = (mt->rate[3] * SID_RATE * SEC_TO_RAD);
+    mt->maxspeed[0] = (mt->rate[3][0] * SID_RATE * SEC_TO_RAD);
+    mt->maxspeed[1] = (mt->rate[3][1] * SID_RATE * SEC_TO_RAD);
      s=f.readStringUntil('\n');
     mt->prescaler=s.toFloat();
     if ((mt->prescaler <0.3)|| (mt->prescaler >2.0)) mt->prescaler=0.4;
