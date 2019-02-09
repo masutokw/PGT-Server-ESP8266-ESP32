@@ -34,7 +34,7 @@ void nunchuck_read(void)
   }
 
   if (lastx != (chuckbuffer[0] /= 86)) {
-    telescope->srate = chuckbuffer[5]&0x3;
+    telescope->srate = chuckbuffer[5]&0x03;
     switch (chuckbuffer[0]) {
       case 0 : mount_move(telescope, 'e'); //Serial.println("Left");
         break;
@@ -49,7 +49,7 @@ void nunchuck_read(void)
 
   lastx = chuckbuffer[0];
   if (lasty != (chuckbuffer[1]  /= 86)) {
-    telescope->srate = chuckbuffer[5];
+    telescope->srate = chuckbuffer[5]&0x03;
     switch (chuckbuffer[1] ) {
       case 0 :  mount_move(telescope, 's'); //Serial.println("Down");
         break;
