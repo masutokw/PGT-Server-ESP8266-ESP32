@@ -1,5 +1,6 @@
 #include "pad.h"
 #include "mount.h"
+#define PIN_MODE  13//16
 extern mount_t *telescope;
 volatile int state[4]= {1,1,1,1};
 volatile int event[4]= {3,3,3,3};
@@ -46,12 +47,12 @@ void doEvent(void)
     switch (event[0])
     {
     case  0:
-       if (digitalRead(16)) mount_move(telescope,'n');
+       if (digitalRead(PIN_MODE)) mount_move(telescope,'n');
        else telescope->srate=(telescope->srate+1)%4;
         event[0]=3;
         break;
     case 1:
-        if (digitalRead(16)) mount_stop(telescope,'n');
+        if (digitalRead(PIN_MODE)) mount_stop(telescope,'n');
         event[0]=3;
         break;
     }
@@ -99,7 +100,7 @@ void pad_Init(void)
     pinMode(bpin[1], INPUT_PULLUP);
     pinMode(bpin[2], INPUT_PULLUP);
     pinMode(bpin[3], INPUT_PULLUP);
-    pinMode(16,INPUT_PULLUP);
+    pinMode(PIN_MODE,INPUT_PULLUP);
     attachInterrupt(bpin[0], onChange_North, CHANGE);
     attachInterrupt(bpin[1], onChange_South, CHANGE);
     attachInterrupt(bpin[2], onChange_West, CHANGE);

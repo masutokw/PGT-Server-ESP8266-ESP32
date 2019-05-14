@@ -218,12 +218,15 @@ void mount_lxra_str(char *message,mount_t *mt)
         if (ang<M_PI) ang+=M_PI;
         else ang-=M_PI;
     }
-    int x = ang*RAD_TO_DEG*3600.0/15.0;
+    int seconds=ang*RAD_TO_DEG*3600.0;
+    int x = trunc (seconds)/15.0;
+    int rest =((seconds%15)*2)/3;
+    rest%=15;
     int gra=x/3600;
     int temp=(x %3600);
     int min=temp/60;
     int sec=temp%60;
-    sprintf(message,"%02d:%02d:%02d#",gra,min,sec);
+    sprintf(message,"%02d:%02d:%02d.%d#",gra,min,sec,rest);
 };
 
 void mount_lxde_str(char* message,mount_t *mt)

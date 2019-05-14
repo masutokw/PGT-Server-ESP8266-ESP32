@@ -8,8 +8,13 @@
 #include "piclevel.h"
 #include "mount.h"
 #include "webserver.h"
+
+//Comment out undesired Feature
+//---------------------------
 #define NUNCHUCK_CONTROL
 //#define FIXED_IP
+//#define OLED_DISPLAY
+//--------------------------------
 #ifdef  NUNCHUCK_CONTROL
 #include "nunchuck.h"
 #endif
@@ -20,7 +25,6 @@
 #define COUNTERS_POLL_TICKER 100
 #include <FS.h>
 
-//#define OLED_DISPLAY
 //comment wifipass.h and uncomment for your  wifi parameters
 //#include "wifipass.h"
 const char* ssid = "MyWIFI";
@@ -40,7 +44,7 @@ Ticker speed_control_tckr, counters_poll_tkr;
 extern long command( char *str );
 time_t now;
 #ifdef OLED_DISPLAY
-#include "SSD1306.h"
+#incl ude "SSD1306.h"
 //#include "SH1106.h"
 
 #include "pad.h"
@@ -64,7 +68,8 @@ void oledDisplay()
   lxprintde(de, telescope->azmotor->delta);
   display.drawString(0, 36, String(de)); // ctime(&now));
   display.drawString(0, 18, "MA:" + String(telescope->azmotor->counter) + " MD:" + String(telescope->altmotor->counter));
-  display.drawString(0, 27, "Dt:" + String(digitalRead(16)));//(telescope->azmotor->slewing));
+  //display.drawString(0, 27, "Dt:" + String(digitalRead(16)));//(telescope->azmotor->slewing));
+   display.drawString(0, 27, "Dt:" + String(digitalRead(16)))+" Rate:" +String(telescope->srate));
   //unsigned int n= pwd.length();
   //display.drawString(0, 32,String(pw)+ " "+ String(n));
   display.drawString(0, 0, ctime(&now));
@@ -158,7 +163,7 @@ void setup()
 
 #ifdef NUNCHUCK_CONTROL
   // nunchuck_init(D6, D5);
-  nunchuck_init(2, 0);
+     nunchuck_init(2, 0);
 
 #endif
 
