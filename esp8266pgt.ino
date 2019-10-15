@@ -12,7 +12,7 @@
 //Comment out undesired Feature
 //---------------------------
 #define NUNCHUCK_CONTROL
-//#define FIXED_IP
+#define FIXED_IP 15
 //#define OLED_DISPLAY
 //--------------------------------
 #ifdef  NUNCHUCK_CONTROL
@@ -26,9 +26,9 @@
 #include <FS.h>
 
 //comment wifipass.h and uncomment for your  wifi parameters
-//#include "wifipass.h"
-const char* ssid = "MyWIFI";
-const char* password = "Mypassword";
+#include "wifipass.h"
+//const char* ssid = "MyWIFI";
+//const char* password = "Mypassword";
 extern picmsg  msg;
 extern volatile int state;
 WiFiServer server(10001);
@@ -44,7 +44,7 @@ Ticker speed_control_tckr, counters_poll_tkr;
 extern long command( char *str );
 time_t now;
 #ifdef OLED_DISPLAY
-#incl ude "SSD1306.h"
+#include "SSD1306.h"
 //#include "SH1106.h"
 
 #include "pad.h"
@@ -69,7 +69,7 @@ void oledDisplay()
   display.drawString(0, 36, String(de)); // ctime(&now));
   display.drawString(0, 18, "MA:" + String(telescope->azmotor->counter) + " MD:" + String(telescope->altmotor->counter));
   //display.drawString(0, 27, "Dt:" + String(digitalRead(16)));//(telescope->azmotor->slewing));
-   display.drawString(0, 27, "Dt:" + String(digitalRead(16)))+" Rate:" +String(telescope->srate));
+   display.drawString(0, 27, "Dt:" + String(digitalRead(16))+" Rate:" +String(telescope->srate));
   //unsigned int n= pwd.length();
   //display.drawString(0, 32,String(pw)+ " "+ String(n));
   display.drawString(0, 0, ctime(&now));
@@ -187,11 +187,11 @@ void setup()
   }
   else  WiFi.begin(ssid, password);
 #ifdef FIXED_IP
-  IPAddress ip(192, 168, 0, 14);
-  IPAddress gateway(192, 168, 0, 1);
-  IPAddress subnet(255, 255, 255, 0);
- // IPAddress DNS(8, 8, 8, 8);
-  WiFi.config(ip, gateway, subnet);
+  IPAddress ip(192, 168, 1, FIXED_IP);
+  IPAddress gateway(192, 168, 1, 1);
+  IPAddress subnet(255, 255, 254, 0);
+  IPAddress DNS(192, 168, 1, 1);
+  WiFi.config(ip, gateway, subnet,gateway);
 #endif
 
   delay(500);
@@ -201,6 +201,7 @@ void setup()
   {
     //     while (1) delay(500);
   }
+  if (WiFi.status() != WL_CONNECTED) WiFi.disconnect(true);
 #ifdef OLED_DISPLAY
   oled_waitscr();
 #endif
