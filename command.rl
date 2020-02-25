@@ -142,7 +142,7 @@ long command( char *str )
         action addsec {deg+=sec;}
         action storecmd {stcmd=fc;}
         action setdate {set_date(sec,min,deg);}
-
+		action return_alignmode{sprintf(tmessage,"P");}
 #definicion sintaxis LX terminos auxiliares
         sexmin =  ([0-5][0-9])$getmin@addmin ;
         sex= ([0-5][0-9] )$getsec@addsec;
@@ -156,7 +156,8 @@ long command( char *str )
         Set='S'(((([dazgt]@storecmd (''|space) deg ) | ([rLS]@storecmd (''|space) RA))%set_cmd_exec)|'C 'date%setdate|'w 3'%ok);
         Sync = "CM"(''|'R')%sync;
         Stop ='Q' (''|[nsew])@storecmd %stop;
-        main := (''|'#') (':' (Set | Move | Stop|Rate | Sync | Poll) '#')*  ;
+		ACK = 0x06 @return_alignmode;
+        main := (ACK|''|'#') (':' (Set | Move | Stop|Rate | Sync | Poll) '#')*  ;
 
 # Initialize and execute.
         write init;
