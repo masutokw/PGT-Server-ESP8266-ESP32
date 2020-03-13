@@ -51,7 +51,7 @@ typedef struct picresponse PICRSP;
 void pollcounters(char id);
 int  readcounters (char id);
 void motor_set_period (char id ,  int base  , char post );
-void aux_set_period (char id, int base);
+void aux_set_period  (char id, int base);
 void set_motor_target (char id, int base);
 void set_aux_target (char id, int base);
 void save_counters(char id);

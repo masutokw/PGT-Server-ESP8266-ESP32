@@ -12,7 +12,7 @@
 //Comment out undesired Feature
 //---------------------------
 #define NUNCHUCK_CONTROL
-//#define FIXED_IP 15
+//#define FIXED_IP 17
 //#define OLED_DISPLAY
 //--------------------------------
 #ifdef  NUNCHUCK_CONTROL

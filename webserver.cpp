@@ -97,17 +97,17 @@ void handleConfig()
   content += "<tr><td>Counter</td><td> <input type='number' name='MAXCOUNTER' style='text-align: right;height:20px; width:80px' value ='" + String(telescope->azmotor->maxcounter) + "'></td>";
   content += "<td> <input type='number' name='MAXCOUNTER_ALT' style='text-align: right;height:20px; width:80px' value ='" + String(telescope->altmotor->maxcounter) + "'></td></tr></table><br>";
   content += "<table style='width:200px'><tr><th>Rate X</th><th>RA/AZ</th><th>Dec/Alt</th></tr>";
-  content += "<tr><td>Guide</td><td><input type='number' step='0.1' name='GUIDE'"+String(N_STYLE) + String(telescope->rate[0][0]) + "'></td>";
-  content += "<td><input type='number' step='0.1' name='GUIDEA'"+String(N_STYLE) + String(telescope->rate[0][1]) + "'></td></tr>";
+  content += "<tr><td>Guide</td><td><input type='number' step='0.01' name='GUIDE'"+String(N_STYLE) + String(telescope->rate[0][0]) + "'></td>";
+  content += "<td><input type='number' step='0.01' name='GUIDEA'"+String(N_STYLE) + String(telescope->rate[0][1]) + "'></td></tr>";
 
-  content += "<tr><td>Center</td><td><input type='number' step='1' name='CENTER'"+String(N_STYLE) + String(telescope->rate[1][0]) + "'></td>";
-  content += "<td><input type='number' step='1' name='CENTERA'"+String(N_STYLE) + String(telescope->rate[1][1]) + "'></td></tr>";
+  content += "<tr><td>Center</td><td><input type='number' step='0.01' name='CENTER'"+String(N_STYLE) + String(telescope->rate[1][0]) + "'></td>";
+  content += "<td><input type='number' step='0.01' name='CENTERA'"+String(N_STYLE) + String(telescope->rate[1][1]) + "'></td></tr>";
 
-  content += "<tr><td>Find</td><td><input type='number' step='1' name='FIND'"+ String(N_STYLE) + String(telescope->rate[2][0]) + "'></td>";
-  content += "<td><input type='number' step='1' name='FINDA' style='text-align: right;height:20px; width:60px' value ='" + String(telescope->rate[2][1]) + "'></td></tr>";
+  content += "<tr><td>Find</td><td><input type='number' step='0.01' name='FIND'"+ String(N_STYLE) + String(telescope->rate[2][0]) + "'></td>";
+  content += "<td><input type='number' step='0.01' name='FINDA' style='text-align: right;height:20px; width:60px' value ='" + String(telescope->rate[2][1]) + "'></td></tr>";
 
-  content += "<tr><td>Slew</td><td><input type='number' step='1' name='SLEW'"+ String(N_STYLE)+ String(telescope->rate[3][0]) + "'></td>";
-  content += "<td><input type='number' step='1' name='SLEWA'"+ String(N_STYLE) + String(telescope->rate[3][1]) + "'></td></tr>";
+  content += "<tr><td>Slew</td><td><input type='number' step='0.01' name='SLEW'"+ String(N_STYLE)+ String(telescope->rate[3][0]) + "'></td>";
+  content += "<td><input type='number' step='0.01' name='SLEWA'"+ String(N_STYLE) + String(telescope->rate[3][1]) + "'></td></tr>";
   
   content += "<tr><td>Prescaler</td><td><input type='number' name='PRESCALER' style='text-align: right;height:20px; width:50px' value ='" + String(telescope->prescaler) + "' uSec</td></tr></table></fieldset>";
   content += "<fieldset style=\"width:15%\"> <legend>Geodata</legend>";

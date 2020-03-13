@@ -31,4 +31,6 @@ void lxprintra(char *message,double ang);
 double calc_Ra(double lha,double longitude);
 double calc_lha(double ra,double longitude);
 void config_NTP(int zone,int dls );
+int sign(double t);
+
 #endif

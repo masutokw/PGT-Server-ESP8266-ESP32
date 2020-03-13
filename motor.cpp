@@ -5,13 +5,7 @@
 #include <unistd.h>
 #include <stdio.h>
 
-int sign(double t)
-{
-    if (t<0.0) return -1;
-    else if (t==0.0 )return 0;
-    else return 1;
-
-}
+extern int aux_count;
 
 void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick)
 {
@@ -25,6 +19,8 @@ void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick)
     mt->id=ref;
     mt->slewing=0;
     set_motor_max_counter(ref, maxcounter);
+    mt->auxcounter=0;
+    
 }
 
 void setspeed(motor_t* mt ,double tspeed)
@@ -67,7 +63,7 @@ void readcounter(motor_t* mt)
 {
     int n=readcounters(mt->id);
     if (n!=-1)
-    {
+    {   mt->auxcounter=aux_count;
         mt->pos_angle= mt->resolution*(mt->counter=n);
         mt->delta= mt->pos_angle-mt->target;
     }

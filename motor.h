@@ -10,7 +10,7 @@ typedef struct
            targetspeed,speed,current_speed,
            acceleration,maxrange,min_range,
            timertick;
-    int counter,maxcounter,range,slewing;
+    int counter,maxcounter,range,slewing,auxcounter;
     char id;
 } motor_t;
 

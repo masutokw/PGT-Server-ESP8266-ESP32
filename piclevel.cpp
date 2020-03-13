@@ -6,7 +6,7 @@
 picmsg  msg = {CMD_FCODE, 0xFE, 0xFE, 0xFF, 0, 0};
 
 int h, v;
-
+int aux_count;
 /*int readcounters (char id)
 {
     PICRSP rsp;
@@ -60,7 +60,7 @@ int readcounters (char id)
 
         countr = Serial.readBytes((char *)&rsp,count);
         if ((countr == 9) && (rsp.control == RESPONSE_OK))
-        {
+        {  aux_count=rsp.counteraux;
             return rsp.counter;
         }
 

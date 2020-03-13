@@ -174,5 +174,12 @@ double sidereal_timeGMT_alt(double longitude)
     if (temp>=24.0) return temp-24.0;
     return temp;
 }
+int sign(double t)
+{
+    if (t<0.0) return -1;
+    else if (t==0.0 )return 0;
+    else return 1;
+
+}
 
 
