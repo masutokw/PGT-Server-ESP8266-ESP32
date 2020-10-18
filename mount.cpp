@@ -81,7 +81,7 @@ void thread_counter(mount_t* mt1)
         else
         {
             readcounter(mt1->azmotor);
-            sgndelta = sign (delta =mt1->azmotor->delta= mt1->azmotor->pos_angle - calc_Ra(mt1->azmotor->target, mt1->longitude));
+            sgndelta = sign (delta = mt1->track *(mt1->azmotor->delta= mt1->azmotor->pos_angle - calc_Ra(mt1->azmotor->target, mt1->longitude)));
             if ( mt1->azmotor->slewing)
             {
                 //  sgndelta = sign (delta =mt1->azmotor->delta= mt1->azmotor->pos_angle - calc_Ra(mt1->azmotor->target, mt1->longitude));
@@ -93,7 +93,7 @@ void thread_counter(mount_t* mt1)
                 }
                 else
                 {
-                    mt1->azmotor->targetspeed = SID_RATE * SEC_TO_RAD;
+                    mt1->azmotor->targetspeed = SID_RATE * SEC_TO_RAD*mt1->track;
                     mt1->azmotor->slewing = 0;
                 }
             }
@@ -143,11 +143,11 @@ int mount_stop(mount_t *mt, char direction)
         break;
     case 'w':
     case 'e':
-        mt->azmotor->targetspeed = SID_RATE * SEC_TO_RAD;
+        mt->azmotor->targetspeed = SID_RATE * SEC_TO_RAD*mt->track;
         break;
     default:
         mt->altmotor->targetspeed = 0.0;
-        mt->azmotor->targetspeed = SID_RATE * SEC_TO_RAD;
+        mt->azmotor->targetspeed = SID_RATE * SEC_TO_RAD*mt->track;
         break;
     };
 }
@@ -274,6 +274,8 @@ int readconfig(mount_t *mt)
      s=f.readStringUntil('\n');
     mt->prescaler=s.toFloat();
     if ((mt->prescaler <0.3)|| (mt->prescaler >2.0)) mt->prescaler=0.4;
+     s=f.readStringUntil('\n');
+     mt->track=(s.toInt()>0);
     s=f.readStringUntil('\n');
     mt->longitude = s.toFloat();
     s=f.readStringUntil('\n');

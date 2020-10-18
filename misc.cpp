@@ -1,6 +1,7 @@
 #include "misc.h"
 #include "time.h"
 #include "sntp.h"
+#include <TZ.h>
 double sdt;
 long sdt_millis;
 void sdt_init(double longitude,int tz)
@@ -125,9 +126,22 @@ void lxprintra(char *message,double ang)
     sprintf(message,"%02d:%02d:%02d",gra,min,sec);
     //APPEND
 };
-void config_NTP(int zone,int dls)
-{
-    configTime(zone*3600, dls*3600 , "hora.roa.es","0.es.pool.ntp.org","cuco.rediris.es");
+void config_NTP(int zone, int dls)
+{ char tx[10];
+ int x=zone;
+  char c = '-';
+ //configTime(zone * 3600, dls * 3600 , " 193.145.15.15", "0.es.pool.ntp.org", "cuco.rediris.es");
+ configTime(TZ_Europe_Madrid, "pool.ntp.org");
+ //configTime(PSTR("GMT-2"), "0.es.pool.ntp.org");
+   if (x < 0)
+  {
+    x = -x;
+    c = '+';
+  }
+ sprintf(tx,"GMT%c%x",c,x);
+ 
+// configTime(tx, "pool.ntp.org");
+
 }
 
 void enc_to_eq(double x,double y,double *a,double  *b,char *pier)
@@ -181,5 +195,3 @@ int sign(double t)
     else return 1;
 
 }
-
-

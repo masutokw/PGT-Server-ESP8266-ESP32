@@ -62,8 +62,10 @@ void go_to(motor_t* mt,double position,double speed)
 void readcounter(motor_t* mt)
 {
     int n=readcounters(mt->id);
+   
     if (n!=-1)
-    {   mt->auxcounter=aux_count;
+    {   n%=mt->maxcounter;
+        mt->auxcounter=aux_count;
         mt->pos_angle= mt->resolution*(mt->counter=n);
         mt->delta= mt->pos_angle-mt->target;
     }
@@ -102,7 +104,7 @@ void  loadconf(motor_t* mt,char* name) {}
 
 
 void  savemotorcounter(motor_t* mt)
-{
+{  
   save_counters (mt->id);
 }
 

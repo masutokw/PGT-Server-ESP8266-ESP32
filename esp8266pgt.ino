@@ -1,5 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#include <ESP8266HTTPUpdateServer.h>
 #include <time.h>
 #include "sntp.h"
 #include <Ticker.h>
@@ -8,12 +9,17 @@
 #include "piclevel.h"
 #include "mount.h"
 #include "webserver.h"
-
+#define OTA
+#ifdef OTA
+#include <ArduinoOTA.h>
+#include "OTA_helper.hpp"
+#endif
+//#define OLED_DISPLAY
+//#define PAD
 //Comment out undesired Feature
 //---------------------------
 #define NUNCHUCK_CONTROL
 //#define FIXED_IP 17
-//#define OLED_DISPLAY
 //--------------------------------
 #ifdef  NUNCHUCK_CONTROL
 #include "nunchuck.h"
@@ -34,6 +40,7 @@ extern volatile int state;
 WiFiServer server(10001);
 WiFiClient serverClients[MAX_SRV_CLIENTS];
 ESP8266WebServer serverweb(80);
+ESP8266HTTPUpdateServer httpUpdater;
 char buff[50] = "Waiting for connection..";
 extern char  response[200];
 mount_t *telescope;
@@ -43,60 +50,17 @@ Ticker speed_control_tckr, counters_poll_tkr;
 
 extern long command( char *str );
 time_t now;
+#ifdef PAD
+#include "pad.h"
+#endif
 #ifdef OLED_DISPLAY
-#include "SSD1306.h"
+#include "SSD1306Wire.h"
 //#include "SH1106.h"
 
-#include "pad.h"
+//#include "pad.h"
 //SSD1306
-SSD1306 display(0x3c, D5, D6);
+SSD1306Wire display(0x3c, D5, D6);
 
-void oledDisplay()
-{
-  char ra[20] = "";
-  char de[20] = "";
-  //write some information for debuging purpose to OLED display.
-  display.clear();
-  // display.drawString (0, 0, "ESP-8266 PicGoto++ 0.1");
-  // display.drawString(0, 13, String(buff) + "  " + String(response));
-  lxprintra(ra, sidereal_timeGMT_alt(telescope->longitude) * 15.0 * DEG_TO_RAD);
-  display.drawString(0, 9, "LST " + String(ra));
-  lxprintra(ra, calc_Ra(telescope->azmotor->pos_angle, telescope->longitude));
-  lxprintde(de, telescope->altmotor->pos_angle);
-
-  display.drawString(0, 50, "RA:" + String(ra) + " DE:" + String(de));
-  lxprintde(de, telescope->azmotor->delta);
-  display.drawString(0, 36, String(de)); // ctime(&now));
-  display.drawString(0, 18, "MA:" + String(telescope->azmotor->counter) + " MD:" + String(telescope->altmotor->counter));
-  //display.drawString(0, 27, "Dt:" + String(digitalRead(16)));//(telescope->azmotor->slewing));
-   display.drawString(0, 27, "Dt:" + String(digitalRead(16))+" Rate:" +String(telescope->srate));
-  //unsigned int n= pwd.length();
-  //display.drawString(0, 32,String(pw)+ " "+ String(n));
-  display.drawString(0, 0, ctime(&now));
-  display.display();
-}
-void oled_initscr(void)
-
-{
-  display.init();
-  //  display.flipScreenVertically();
-  display.setFont(ArialMT_Plain_10);
-  display.setTextAlignment(TEXT_ALIGN_LEFT);
-  display.clear();
-  display.drawString(0, 0, "Connecting to " + String(ssid));
-  display.display();
-}
-
-void oled_waitscr(void)
-{
-  display.clear();
-  display.drawString(0, 0, "Connecting to " + String(ssid));
-  IPAddress ip = WiFi.localIP();
-  String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
-  display.drawString(0, 13, "Got IP! :" + ipStr);
-  display.drawString(0, 26, "Waiting for Client");
-  display.display();
-}
 
 
 #endif
@@ -163,7 +127,7 @@ void setup()
 
 #ifdef NUNCHUCK_CONTROL
   // nunchuck_init(D6, D5);
-     nunchuck_init(2, 0);
+  nunchuck_init(2, 0);
 
 #endif
 
@@ -185,13 +149,16 @@ void setup()
 
     WiFi.begin((const char*)ss, (const char*)pw);
   }
-  else  WiFi.begin(ssid, password);
+  else  {
+    WiFi.begin(ssid, password);
+    SPIFFS.format();
+  }
 #ifdef FIXED_IP
   IPAddress ip(192, 168, 1, FIXED_IP);
   IPAddress gateway(192, 168, 1, 1);
   IPAddress subnet(255, 255, 254, 0);
   IPAddress DNS(192, 168, 1, 1);
-  WiFi.config(ip, gateway, subnet,gateway);
+  WiFi.config(ip, gateway, subnet, gateway);
 #endif
 
   delay(500);
@@ -216,16 +183,19 @@ void setup()
   server.setNoDelay(true);
   telescope = create_mount();
   readconfig(telescope);
+  httpUpdater.setup(&serverweb);
   config_NTP(telescope->time_zone, 0);
   initwebserver();
   delay (2000) ;
   sdt_init(telescope->longitude, telescope->time_zone);
   speed_control_tckr.attach_ms(SPEED_CONTROL_TICKER, thread_motor, telescope);
   counters_poll_tkr.attach_ms(COUNTERS_POLL_TICKER, thread_counter, telescope);
-#ifdef OLED_DISPLAY
+#ifdef PAD
   pad_Init();
-#endif // OLED_DISPLAY
-
+#endif
+#ifdef OTA
+  InitOTA();
+#endif
 }
 
 void loop()
@@ -238,14 +208,13 @@ void loop()
 #ifdef  NUNCHUCK_CONTROL
   nunchuck_read() ;
 #endif
-
-#ifdef OLED_DISPLAY
+#ifdef PAD
   doEvent();
+#endif
+#ifdef OLED_DISPLAY
   oledDisplay();
 #endif
-
+#ifdef OTA
+  ArduinoOTA.handle();
+#endif
 }
-
-
-
-

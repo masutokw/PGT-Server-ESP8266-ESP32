@@ -1,6 +1,6 @@
 #include "pad.h"
 #include "mount.h"
-#define PIN_MODE  13//16
+#define PIN_MODE  16//16
 extern mount_t *telescope;
 volatile int state[4]= {1,1,1,1};
 volatile int event[4]= {3,3,3,3};
@@ -9,7 +9,7 @@ const int debounceDelay = 50;
 int bpin[4]= {2,0,4,5};
 
 
-void onChange(int b)
+void  onChange(int b)
 {
     int reading = digitalRead(bpin[b]);
     if(reading == state[b]) return;
@@ -24,19 +24,19 @@ void onChange(int b)
     event[b] =state[b];
 
 }
-void onChange_North(void)
+void ICACHE_RAM_ATTR onChange_North(void)
 {
     onChange(0);
 }
-void onChange_South(void)
+void  ICACHE_RAM_ATTR onChange_South(void)
 {
     onChange(1);
 }
-void onChange_West(void)
+void ICACHE_RAM_ATTR onChange_West(void)
 {
     onChange(2);
 }
-void onChange_East(void)
+void ICACHE_RAM_ATTR onChange_East(void)
 {
     onChange(3);
 }
@@ -101,10 +101,9 @@ void pad_Init(void)
     pinMode(bpin[2], INPUT_PULLUP);
     pinMode(bpin[3], INPUT_PULLUP);
     pinMode(PIN_MODE,INPUT_PULLUP);
-    attachInterrupt(bpin[0], onChange_North, CHANGE);
-    attachInterrupt(bpin[1], onChange_South, CHANGE);
-    attachInterrupt(bpin[2], onChange_West, CHANGE);
-    attachInterrupt(bpin[3], onChange_East, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(bpin[0]), onChange_North, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(bpin[1]), onChange_South, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(bpin[2]), onChange_West, CHANGE);
+   attachInterrupt(digitalPinToInterrupt(bpin[3]), onChange_East, CHANGE);
 
 }
-
