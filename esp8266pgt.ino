@@ -19,6 +19,10 @@
 //Comment out undesired Feature
 //---------------------------
 #define NUNCHUCK_CONTROL
+//#define IR_CONTROL
+#ifdef   IR_CONTROL
+#include "ir_control.h"
+#endif
 //#define FIXED_IP 17
 //--------------------------------
 #ifdef  NUNCHUCK_CONTROL
@@ -140,18 +144,24 @@ void setup()
     ssi = f.readStringUntil('\n');
     pwd = f.readStringUntil('\n');
     f.close();
-    char  ss [ssi.length() + 1];
-    char  pw [pwd.length() + 1];
-    ssi.toCharArray(ss, ssi.length() + 1);
-    pwd.toCharArray(pw, pwd.length() + 1);
-    pw[pwd.length() + 1] = 0;
-    ss[ssi.length() + 1] = 0;
-
-    WiFi.begin((const char*)ss, (const char*)pw);
+    ssi.trim(); pwd.trim();
+    WiFi.begin(ssi.c_str(), pwd.c_str());
   }
   else  {
     WiFi.begin(ssid, password);
     SPIFFS.format();
+  }
+  f = SPIFFS.open("/network.config", "r");
+  if (f)
+  { IPAddress ip;
+    IPAddress gateway;
+    IPAddress subnet;
+    IPAddress dns;
+    if (ip.fromString(f.readStringUntil('\n')) && subnet.fromString(f.readStringUntil('\n')) && gateway.fromString(f.readStringUntil('\n')) && dns.fromString(f.readStringUntil('\n'))) {
+      WiFi.config(ip, gateway, subnet, dns);
+    }
+
+    f.close();
   }
 #ifdef FIXED_IP
   IPAddress ip(192, 168, 1, FIXED_IP);
@@ -196,6 +206,9 @@ void setup()
 #ifdef OTA
   InitOTA();
 #endif
+#ifdef IR_CONTROL
+ir_init();
+#endif
 }
 
 void loop()
@@ -204,7 +217,9 @@ void loop()
   net_task();
   now = time(nullptr);
   serverweb.handleClient();
-
+#ifdef IR_CONTROL
+ir_read();
+#endif
 #ifdef  NUNCHUCK_CONTROL
   nunchuck_read() ;
 #endif
