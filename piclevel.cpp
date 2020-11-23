@@ -1,8 +1,11 @@
-#include <ESP8266WiFi.h>
 #include "piclevel.h"
 //PICMSG msg = {  {0, 's', 'd'},0 };
 #define ASGN msg.id = msg.idd= id;msg.command
+#ifdef esp8266
 #define SEND_COMMAND  Serial.write((char *) &msg, msg.len)
+#else
+#define SEND_COMMAND  Serial.write((const uint8_t*)&msg, msg.len)
+#endif
 picmsg  msg = {CMD_FCODE, 0xFE, 0xFE, 0xFF, 0, 0};
 
 int h, v;
@@ -248,12 +251,12 @@ set_prescaler(char id, char prescaler)
 
 int sendcommand(void)
 {
+    #ifdef esp8266
     Serial.write((char *) &msg, msg.len);
+    #else
+    Serial.write((const uint8_t*) &msg, msg.len);
+     #endif
     Serial.printf(" bytes %d\n\r", msg.len);
     return msg.len;
 
 }
-
-
-
-

@@ -20,7 +20,7 @@ void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick)
     mt->slewing=0;
     set_motor_max_counter(ref, maxcounter);
     mt->auxcounter=0;
-    
+
 }
 
 void setspeed(motor_t* mt ,double tspeed)
@@ -62,9 +62,10 @@ void go_to(motor_t* mt,double position,double speed)
 void readcounter(motor_t* mt)
 {
     int n=readcounters(mt->id);
-   
+
     if (n!=-1)
-    {   n%=mt->maxcounter;
+    {
+        n%=mt->maxcounter;
         mt->auxcounter=aux_count;
         mt->pos_angle= mt->resolution*(mt->counter=n);
         mt->delta= mt->pos_angle-mt->target;
@@ -104,7 +105,7 @@ void  loadconf(motor_t* mt,char* name) {}
 
 
 void  savemotorcounter(motor_t* mt)
-{  
-  save_counters (mt->id);
+{
+    save_counters (mt->id);
 }
 

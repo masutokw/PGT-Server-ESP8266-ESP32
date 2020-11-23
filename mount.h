@@ -1,7 +1,6 @@
 #ifndef MOUNT_H_INCLUDED
 #define MOUNT_H_INCLUDED
-#include <ESP8266WiFi.h>
-#define COUNTERS_POLL_TICKER 100
+#include "conf.h"
 #include <FS.h>
 #include "piclevel.h"
 #include "motor.h"

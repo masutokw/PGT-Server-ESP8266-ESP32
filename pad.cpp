@@ -47,8 +47,8 @@ void doEvent(void)
     switch (event[0])
     {
     case  0:
-       if (digitalRead(PIN_MODE)) mount_move(telescope,'n');
-       else telescope->srate=(telescope->srate+1)%4;
+        if (digitalRead(PIN_MODE)) mount_move(telescope,'n');
+        else telescope->srate=(telescope->srate+1)%4;
         event[0]=3;
         break;
     case 1:
@@ -104,6 +104,6 @@ void pad_Init(void)
     attachInterrupt(digitalPinToInterrupt(bpin[0]), onChange_North, CHANGE);
     attachInterrupt(digitalPinToInterrupt(bpin[1]), onChange_South, CHANGE);
     attachInterrupt(digitalPinToInterrupt(bpin[2]), onChange_West, CHANGE);
-   attachInterrupt(digitalPinToInterrupt(bpin[3]), onChange_East, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(bpin[3]), onChange_East, CHANGE);
 
 }

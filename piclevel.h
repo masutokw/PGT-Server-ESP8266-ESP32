@@ -1,3 +1,4 @@
+#include "conf.h"
 #ifndef PICLEVEL_H_INCLUDED
 #define PICLEVEL_H_INCLUDED
 #define M1_SPEED_SET_CMD 0

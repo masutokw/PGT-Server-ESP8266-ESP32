@@ -1,4 +1,4 @@
-#include <ESP8266WebServer.h>
+
 #include "time.h"
 #include "webserver.h"
 
@@ -83,11 +83,8 @@ void handleConfig()
     }
     f.close ();
   }
-  //  String Jsc="<script>function getLocation() {if (navigator.geolocation) {navigator.geolocation.getCurrentPosition(showPosition);";
-  //  Jsc+="} else {x.innerHTML = \"Geolocation not\";}}";
-  //  Jsc+=" function showPosition(position) {document.getElementById('lon').value =  position.coords.longitude;document.getElementById('lat').value =  position.coords.latitude;}</script>";
+
   String content = "<html><style>" + String(BUTT) + String(TEXTT) + "</style>"+String(AUTO_SIZE)+"<body  bgcolor=\"#000000\" text=\"#FF6000\"><form action='/config' method='POST'><h2>ESP-PGT++ Config</h2>";
-  // content+=Jsc;
   content += "<fieldset style=\"width:15%;border-radius:15px\"> <legend>Login  information:</legend>";
   content += "<table style='width:200px'>";
   content += "<tr><td>SSID</td><td><input type='text' name='SSID'  class=\"text_red\" value='" + ssi + "'></td></tr> ";

@@ -1,4 +1,4 @@
- #include "mount.h"
+#include "mount.h"
 #include "misc.h"
 char sel_flag;
 
@@ -300,3 +300,27 @@ void mount_park(mount_t *mt)
   save_counters(AZ_ID);
    delay(10); 
 }
+
+
+
+
+/*
+void meridianflip(piersideeast: Boolean);
+var
+  buff: String;
+  artemp: extended;
+  count: Integer;
+  dectemp: Integer;
+  temp: Integer;
+begin
+  GetPos();
+  artemp := (ArPos + EncoderRaRes div 2) mod EncoderRaRes;
+  SetMotorCounter(DEVICE_AR, trunc(artemp));
+  sleep(10);
+  if deccounter <= (EncoderDecRes div 2) then
+    dectemp := (EncoderDecRes div 2) - deccounter
+  else
+    dectemp := (EncoderDecRes + EncoderDecRes div 2) - deccounter;
+  SetMotorCounter(DEVICE_DE, dectemp);
+  sleep(10);
+end;*/

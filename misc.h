@@ -1,15 +1,12 @@
 #ifndef MISC_H_INCLUDED
 #define MISC_H_INCLUDED
-#include <ESP8266WiFi.h>
+#include "conf.h"
 #include <time.h>
 #include <sys/time.h>
 #include <machine/time.h>
 #include <sys/reent.h>
-#include <user_interface.h>
-#include "sntp.h"
 #include <math.h>
 #include <stdio.h>
-//#include <Arduino.h>
 #ifndef FALSE
 #define FALSE 0
 #endif

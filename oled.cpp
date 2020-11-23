@@ -1,7 +1,7 @@
 #include "oled.h"
 extern mount_t *telescope;
 //SSD1306 display(0x3c, D5, D6);
-SSD1306 display(0x3c, 0, 2);
+SSD1306Wire display(0x3c, 0, 2);
 extern time_t now;
 extern String ssi;
 void oledDisplay()
