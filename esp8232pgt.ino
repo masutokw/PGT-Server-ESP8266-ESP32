@@ -55,187 +55,189 @@ time_t now;
 
 #endif
 #ifndef esp8266
-void bttask(void) {
-  if (SerialBT.available()) {
-    char n = 0;
-    while (SerialBT.available())  buff[n++] = (char) SerialBT.read() ;
-    command(buff);
-    buff[n] = 0;
-    SerialBT.write((const uint8_t* )response, strlen(response));
+void bttask(void)
+{
+    if (SerialBT.available())
+    {
+        char n = 0;
+        while (SerialBT.available())  buff[n++] = (char) SerialBT.read() ;
+        command(buff);
+        buff[n] = 0;
+        SerialBT.write((const uint8_t* )response, strlen(response));
 
-  }
+    }
 }
 #endif
 
 int net_task(void)
 {
-  int lag = millis();
-  size_t n;
-  uint8_t i;
-  //Sky Safari does not make a persistent connection, so each commnad query is managed as a single independent client.
-  if (server.hasClient())
-  {
+    int lag = millis();
+    size_t n;
+    uint8_t i;
+    //Sky Safari does not make a persistent connection, so each commnad query is managed as a single independent client.
+    if (server.hasClient())
+    {
+        for (i = 0; i < MAX_SRV_CLIENTS; i++)
+        {
+            //find free/disconnected spot
+            if (!serverClients[i] || !serverClients[i].connected())
+            {
+                if (serverClients[i]) serverClients[i].stop();
+                serverClients[i] = server.available();
+                continue;
+            }
+        }
+        //Only one client at time, so reject
+        WiFiClient serverClient = server.available();
+        serverClient.stop();
+    }
+    //check clients for data
     for (i = 0; i < MAX_SRV_CLIENTS; i++)
     {
-      //find free/disconnected spot
-      if (!serverClients[i] || !serverClients[i].connected())
-      {
-        if (serverClients[i]) serverClients[i].stop();
-        serverClients[i] = server.available();
-        continue;
-      }
-    }
-    //Only one client at time, so reject
-    WiFiClient serverClient = server.available();
-    serverClient.stop();
-  }
-  //check clients for data
-  for (i = 0; i < MAX_SRV_CLIENTS; i++)
-  {
-    if (serverClients[i] && serverClients[i].connected())
-    {
-      if (serverClients[i].available())
-      {
-        //get data from the  client and push it to LX200 FSM
-
-        while (serverClients[i].available())
+        if (serverClients[i] && serverClients[i].connected())
         {
-          delay(1);
-          size_t n = serverClients[i].available();
-          serverClients[i].readBytes(buff, n);
-          command( buff);
-          buff[n] = 0;
-          serverClients[i].write((char*)response, strlen(response));
+            if (serverClients[i].available())
+            {
+                //get data from the  client and push it to LX200 FSM
 
-          //checkfsm();
+                while (serverClients[i].available())
+                {
+                    delay(1);
+                    size_t n = serverClients[i].available();
+                    serverClients[i].readBytes(buff, n);
+                    command( buff);
+                    buff[n] = 0;
+                    serverClients[i].write((char*)response, strlen(response));
+
+                    //checkfsm();
+                }
+
+            }
         }
-
-      }
     }
-  }
-  return millis() - lag;
+    return millis() - lag;
 }
 
 void setup()
 {
 
 #ifdef OLED_DISPLAY
-  oled_initscr();
+    oled_initscr();
 #endif
 #ifdef NUNCHUCK_CONTROL
-  // nunchuck_init(D6, D5);
-  nunchuck_init(2, 0);
+    // nunchuck_init(D6, D5);
+    nunchuck_init(2, 0);
 
 #endif
 
-  WiFi.mode(WIFI_AP_STA);
-  WiFi.softAP("PGT_ESP", "boquerones");
-  SPIFFS.begin();
-  File f = SPIFFS.open("/wifi.config", "r");
-  if (f)
-  {
-    ssi = f.readStringUntil('\n');
-    pwd = f.readStringUntil('\n');
-    f.close();
-    ssi.trim();
-    pwd.trim();
-    WiFi.begin(ssi.c_str(), pwd.c_str());
-  }
-  else
-  {
-    WiFi.begin(ssid, password);
-    SPIFFS.format();
-  }
-  f = SPIFFS.open("/network.config", "r");
-  if (f)
-  {
-    IPAddress ip;
-    IPAddress gateway;
-    IPAddress subnet;
-    IPAddress dns;
-    if (ip.fromString(f.readStringUntil('\n')) &&
-        subnet.fromString(f.readStringUntil('\n')) &&
-        gateway.fromString(f.readStringUntil('\n')) &&
-        dns.fromString(f.readStringUntil('\n')))
+    WiFi.mode(WIFI_AP_STA);
+    WiFi.softAP("PGT_ESP", "boquerones");
+    SPIFFS.begin();
+    File f = SPIFFS.open("/wifi.config", "r");
+    if (f)
     {
-      WiFi.config(ip, gateway, subnet, dns);
+        ssi = f.readStringUntil('\n');
+        pwd = f.readStringUntil('\n');
+        f.close();
+        ssi.trim();
+        pwd.trim();
+        WiFi.begin(ssi.c_str(), pwd.c_str());
     }
+    else
+    {
+        WiFi.begin(ssid, password);
+        SPIFFS.format();
+    }
+    f = SPIFFS.open("/network.config", "r");
+    if (f)
+    {
+        IPAddress ip;
+        IPAddress gateway;
+        IPAddress subnet;
+        IPAddress dns;
+        if (ip.fromString(f.readStringUntil('\n')) &&
+                subnet.fromString(f.readStringUntil('\n')) &&
+                gateway.fromString(f.readStringUntil('\n')) &&
+                dns.fromString(f.readStringUntil('\n')))
+        {
+            WiFi.config(ip, gateway, subnet, dns);
+        }
 
-    f.close();
-  }
+        f.close();
+    }
 #ifdef FIXED_IP
-  IPAddress ip(192, 168, 1, FIXED_IP);
-  IPAddress gateway(192, 168, 1, 1);
-  IPAddress subnet(255, 255, 254, 0);
-  IPAddress DNS(192, 168, 1, 1);
-  WiFi.config(ip, gateway, subnet, gateway);
+    IPAddress ip(192, 168, 1, FIXED_IP);
+    IPAddress gateway(192, 168, 1, 1);
+    IPAddress subnet(255, 255, 254, 0);
+    IPAddress DNS(192, 168, 1, 1);
+    WiFi.config(ip, gateway, subnet, gateway);
 #endif
 
-  delay(500);
-  uint8_t i = 0;
-  while (WiFi.status() != WL_CONNECTED && i++ < 20) delay(500);
-  if (i == 21)
-  {
-    //     while (1) delay(500);
-  }
-  if (WiFi.status() != WL_CONNECTED) WiFi.disconnect(true);
+    delay(500);
+    uint8_t i = 0;
+    while (WiFi.status() != WL_CONNECTED && i++ < 20) delay(500);
+    if (i == 21)
+    {
+        //     while (1) delay(500);
+    }
+    if (WiFi.status() != WL_CONNECTED) WiFi.disconnect(true);
 #ifdef OLED_DISPLAY
-  oled_waitscr();
+    oled_waitscr();
 #endif
 
-  //start UART and the server
-  Serial.begin(BAUDRATE);
+    //start UART and the server
+    Serial.begin(BAUDRATE);
 #ifdef OLED_DISPLAY
-  // Serial.swap();
+    // Serial.swap();
 #endif
-  //
-  server.begin();
-  server.setNoDelay(true);
-  telescope = create_mount();
-  readconfig(telescope);
+    //
+    server.begin();
+    server.setNoDelay(true);
+    telescope = create_mount();
+    readconfig(telescope);
 #ifdef esp8266
-  httpUpdater.setup(&serverweb);
+    httpUpdater.setup(&serverweb);
 #endif
-  config_NTP(telescope->time_zone, 0);
-  initwebserver();
-  delay (2000) ;
-  sdt_init(telescope->longitude, telescope->time_zone);
-  speed_control_tckr.attach_ms(SPEED_CONTROL_TICKER, thread_motor, telescope);
-  counters_poll_tkr.attach_ms(COUNTERS_POLL_TICKER, thread_counter, telescope);
+    config_NTP(telescope->time_zone, 0);
+    initwebserver();
+    delay (2000) ;
+    sdt_init(telescope->longitude, telescope->time_zone);
+    speed_control_tckr.attach_ms(SPEED_CONTROL_TICKER, thread_motor, telescope);
+    counters_poll_tkr.attach_ms(COUNTERS_POLL_TICKER, thread_counter, telescope);
 #ifdef PAD
-  pad_Init();
+    pad_Init();
 #endif
 #ifdef OTA
-  InitOTA();
+    InitOTA();
 #endif
 #ifdef IR_CONTROL
-  ir_init();
+    ir_init();
 #endif
 }
 
 void loop()
 {
-  delay(10);
-  net_task();
+    delay(10);
+    net_task();
 #ifndef esp8266
-  bttask();
+    bttask();
 #endif
-  now = time(nullptr);
-  serverweb.handleClient();
+    now = time(nullptr);
+    serverweb.handleClient();
 #ifdef IR_CONTROL
-  ir_read();
+    ir_read();
 #endif
 #ifdef  NUNCHUCK_CONTROL
-  nunchuck_read() ;
+    nunchuck_read() ;
 #endif
 #ifdef PAD
-  doEvent();
+    doEvent();
 #endif
 #ifdef OLED_DISPLAY
-  oledDisplay();
+    oledDisplay();
 #endif
 #ifdef OTA
-  ArduinoOTA.handle();
+    ArduinoOTA.handle();
 #endif
 
 

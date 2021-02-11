@@ -16,6 +16,8 @@
 #define RAD_TO_DEG 180.0/M_PI
 #define K_SID 1.00273790935
 #define SEC_TO_RAD (M_PI/(3600.0*180.0))
+#define RAD_TO_ARCS (180.0*3600.0/M_PI)
+#define JD2000          2451545.0
 typedef struct timespec wallclock_t;
 void sdt_init(double longitude,int tz);
 double ln_range_degrees (double angle);
@@ -29,5 +31,6 @@ double calc_Ra(double lha,double longitude);
 double calc_lha(double ra,double longitude);
 void config_NTP(int zone,int dls );
 int sign(double t);
+void ln_get_equ_prec (double mean_ra,double mean_dec, double JD,double  *position_ra,double  *position_dec);
 
 #endif

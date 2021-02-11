@@ -1,3 +1,5 @@
+#include "conf.h"
+#ifdef PAD
 #include "pad.h"
 #include "mount.h"
 #define PIN_MODE  16//16
@@ -107,3 +109,4 @@ void pad_Init(void)
     attachInterrupt(digitalPinToInterrupt(bpin[3]), onChange_East, CHANGE);
 
 }
+#endif

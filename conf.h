@@ -8,7 +8,7 @@
 #include "sntp.h"
 #include <user_interface.h>
 
-#else 
+#else
 #include <WiFi.h>
 #include <WebServer.h>
 #include <Update.h>
@@ -18,12 +18,12 @@
 #endif
 //optional
 
-//#define NUNCHUCK_CONTROL
-#define IR_CONTROL
+#define NUNCHUCK_CONTROL
+//#define IR_CONTROL
 //#define PAD
 //#define OLED_DISPLAY
 #define OTA
-#define FIXED_IP 17
+//#define FIXED_IP 17
 
 
 //mandatory

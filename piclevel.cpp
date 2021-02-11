@@ -63,7 +63,8 @@ int readcounters (char id)
 
         countr = Serial.readBytes((char *)&rsp,count);
         if ((countr == 9) && (rsp.control == RESPONSE_OK))
-        {  aux_count=rsp.counteraux;
+        {
+            aux_count=rsp.counteraux;
             return rsp.counter;
         }
 
@@ -251,11 +252,11 @@ set_prescaler(char id, char prescaler)
 
 int sendcommand(void)
 {
-    #ifdef esp8266
+#ifdef esp8266
     Serial.write((char *) &msg, msg.len);
-    #else
+#else
     Serial.write((const uint8_t*) &msg, msg.len);
-     #endif
+#endif
     Serial.printf(" bytes %d\n\r", msg.len);
     return msg.len;
 

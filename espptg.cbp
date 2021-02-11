@@ -14,13 +14,21 @@
 			</Target>
 		</Build>
 		<Unit filename="command.rl" />
+		<Unit filename="conf.h" />
+		<Unit filename="esp8232pgt.ino" />
 		<Unit filename="esp8266pgt.ino" />
+		<Unit filename="focus.cpp" />
+		<Unit filename="ir_control.cpp" />
+		<Unit filename="ir_control.h" />
 		<Unit filename="misc.cpp" />
 		<Unit filename="misc.h" />
 		<Unit filename="motor.cpp" />
 		<Unit filename="motor.h" />
 		<Unit filename="mount.cpp" />
 		<Unit filename="mount.h" />
+		<Unit filename="nunchuck.cpp" />
+		<Unit filename="nunchuck.h" />
+		<Unit filename="oled.cpp" />
 		<Unit filename="pad.cpp" />
 		<Unit filename="pad.h" />
 		<Unit filename="piclevel.cpp" />

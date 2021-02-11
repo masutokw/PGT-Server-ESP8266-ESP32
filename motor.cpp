@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#define  PIC_COUNTER_TOP   0xFFFF
 
 extern int aux_count;
 
@@ -32,15 +33,15 @@ void setspeed(motor_t* mt ,double tspeed)
     if (tspeed!=0.0)
     {
         base=fabs((mt->resolution)/( tspeed*(mt->timertick)));
-        postscaler=base / 65535;
+        postscaler=base /  PIC_COUNTER_TOP;
         if (postscaler > 0)
         {
             base=base / (postscaler+1);
         }   ;
         postscaler++;
     }
-    else base=65535;
-    motor_set_period (mt->id,65535-base,sign(tspeed)*postscaler);
+    else base= PIC_COUNTER_TOP;
+    motor_set_period (mt->id, PIC_COUNTER_TOP-base,sign(tspeed)*postscaler);
 }
 
 

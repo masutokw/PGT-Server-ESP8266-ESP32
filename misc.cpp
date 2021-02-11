@@ -125,7 +125,7 @@ void lxprintra(char *message, double ang)
   //APPEND
 };
 void config_NTP(int zone, int dls)
-{ 
+{
 #ifdef esp8266
   char tx[10];
   int x = zone;
@@ -140,6 +140,8 @@ void config_NTP(int zone, int dls)
   sprintf(tx, "GMT%c%x", c, x);
 
    configTime(tx, "pool.ntp.org");
+   setenv ("TZ", tx, 1);
+   tzset (); 
 #else
 
     configTime(zone * 3600, dls * 3600 , " 193.145.15.15", "0.es.pool.ntp.org", "cuco.rediris.es");
@@ -195,4 +197,48 @@ int sign(double t)
   else if (t == 0.0 )return 0;
   else return 1;
 
+}
+
+//Preccesion from libnova
+void ln_get_equ_prec (double mean_ra,double mean_dec, double JD,double  *position_ra,double *position_dec)
+{
+   double t, t2, t3, A, B, C, zeta, eta, theta, ra, dec;
+
+  /* change original ra and dec to radians */
+  mean_ra = mean_ra /(RAD_TO_DEG);
+  mean_dec = mean_dec/(RAD_TO_DEG);
+
+  /* calc t, zeta, eta and theta for J2000.0 Equ 20.3 */
+  t = (JD - JD2000) / 36525.0;
+  t *= 1.0 / 3600.0;
+  t2 = t * t;
+  t3 = t2 *t;
+  zeta = 2306.2181 * t + 0.30188 * t2 + 0.017998 * t3;
+  eta = 2306.2181 * t + 1.09468 * t2 + 0.041833 * t3;
+  theta = 2004.3109 * t - 0.42665 * t2 - 0.041833 * t3;
+  zeta =  (zeta)/(RAD_TO_DEG);
+  eta =  (eta)/(RAD_TO_DEG);;
+  theta =  (theta)/(RAD_TO_DEG);;
+
+  /* calc A,B,C equ 20.4 */
+  A = cos (mean_dec) * sin (mean_ra + zeta);
+  B = cos (theta) * cos (mean_dec) * cos (mean_ra + zeta) - sin (theta) * sin (mean_dec);
+  C = sin (theta) * cos (mean_dec) * cos (mean_ra + zeta) + cos (theta) * sin (mean_dec);
+
+  ra = atan2 (A,B) + eta;
+
+  /* check for object near celestial pole */
+  if (mean_dec > (0.4 * M_PI) || mean_dec < (-0.4 * M_PI)) {
+    /* close to pole */
+    dec = acos (sqrt(A * A + B * B));
+    if (mean_dec < 0.)
+      dec *= -1; /* 0 <= acos() <= PI */
+  } else {
+    /* not close to pole */
+    dec = asin (C);
+  }
+
+  /* change to degrees */
+  *position_ra = ln_range_degrees ((RAD_TO_DEG)* (ra));
+  *position_dec =(RAD_TO_DEG) * (dec);
 }
