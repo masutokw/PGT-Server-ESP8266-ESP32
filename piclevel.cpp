@@ -250,6 +250,16 @@ set_prescaler(char id, char prescaler)
 
 }
 
+void set_motor_back_slash_mode(char id,char value)
+{
+    ASGN = M1_BACKSLASH_MODE;
+    msg.data.buff[0] =  value;
+    msg.len = 5;
+    SEND_COMMAND;
+
+}
+
+
 int sendcommand(void)
 {
 #ifdef esp8266

@@ -8,7 +8,7 @@
 
 extern int aux_count;
 
-void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick)
+void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick,int back)
 {
     mt->speed=0;
     mt->targetspeed=spd;
@@ -21,7 +21,9 @@ void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick)
     mt->slewing=0;
     set_motor_max_counter(ref, maxcounter);
     mt->auxcounter=0;
-
+    mt->backslash=back;
+    setbackslash(mt,back,1);
+    
 }
 
 void setspeed(motor_t* mt ,double tspeed)
@@ -82,7 +84,11 @@ void settarget(motor_t* mt,int pos)
 {
     set_motor_target(mt->id,pos);
 }
-
+void setbackslash(motor_t* mt,int back,char act)
+{ 
+setmotorbackslash(mt->id,abs(back));
+set_motor_back_slash_mode(mt->id,(back>0)? 1:0);
+}
 void speed_up_down(motor_t* mt)
 {
     if  (mt->speed!=mt->targetspeed)
@@ -109,4 +115,3 @@ void  savemotorcounter(motor_t* mt)
 {
     save_counters (mt->id);
 }
-

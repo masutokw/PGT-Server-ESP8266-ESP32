@@ -69,6 +69,7 @@ void set_start_up(char id);
 void unset_start_up(char id);
 void set_baud_rate(char id, char baud);
 void set_prescaler(char id, char prescaler);
+void set_motor_back_slash_mode(char id,char value);
 int sendcommand(void);
 
 #endif

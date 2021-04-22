@@ -29,8 +29,8 @@ mount_t* create_mount(void)
     m->lat = LOCAL_LATITUDE;
     m->time_zone = TIME_ZONE;
     m->prescaler = 0.4;
-    init_motor( m->azmotor, AZ_ID, maxcounter, SID_RATE * SEC_TO_RAD, m->prescaler);
-    init_motor( m->altmotor,  ALT_ID, maxcounteralt, 0, m->prescaler);
+    init_motor( m->azmotor, AZ_ID, maxcounter, SID_RATE * SEC_TO_RAD, m->prescaler,0);
+    init_motor( m->altmotor,  ALT_ID, maxcounteralt, 0, m->prescaler,0);
 
     return m;
 }
@@ -257,7 +257,7 @@ void mount_lxde_str(char* message, mount_t *mt)
 
 int readconfig(mount_t *mt)
 {
-    int maxcounter, maxcounteralt ;
+    int maxcounter, maxcounteralt,back_az,back_alt;
     File f = SPIFFS.open("/mount.config", "r");
     if (!f) return -1;
     String s = f.readStringUntil('\n');
@@ -284,8 +284,12 @@ int readconfig(mount_t *mt)
     mt->lat = s.toFloat();
     s = f.readStringUntil('\n');
     mt->time_zone = s.toFloat();
-    init_motor( mt->azmotor, AZ_ID, maxcounter, SID_RATE * SEC_TO_RAD, mt->prescaler);
-    init_motor( mt->altmotor,  ALT_ID, maxcounteralt, 0, mt->prescaler);
+    s = f.readStringUntil('\n');
+    back_az=s.toInt();
+    s = f.readStringUntil('\n');
+    back_alt=s.toInt();
+    init_motor( mt->azmotor, AZ_ID, maxcounter, SID_RATE * SEC_TO_RAD, mt->prescaler,back_az);
+    init_motor( mt->altmotor,  ALT_ID, maxcounteralt, 0, mt->prescaler,back_alt);
     return 0;
 
 

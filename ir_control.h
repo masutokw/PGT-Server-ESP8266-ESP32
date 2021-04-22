@@ -18,6 +18,26 @@
 #define CENTER 2
 #define FIND 4
 #define SLEW 5
+#define N_EAST 100
+#define N_WEST 101
+#define S_EAST 102
+#define S_WEST 103
+#define TRACK 104
+#define TRACK_OFF 105
+#define B_1 106
+#define B_2 107
+#define B_3 108
+#define B_4 109
+#define B_5 110
+#define B_6 111
+#define B_7 112
+#define B_8 113
+#define B_9 114
+#define B_0 115
+#define GO_TO 116
+#define CLEAR 117
+#define FLIP_W 118
+#define FLIP_E 119
 #endif
 
 #if REMOTE_T ==2
@@ -32,6 +52,26 @@
 #define CENTER 70
 #define FIND 71
 #define SLEW 68
+#define N_EAST 100
+#define N_WEST 101
+#define S_EAST 102
+#define S_WEST 103
+#define TRACK 22
+#define TRACK_OFF 13
+#define B_1 106
+#define B_2 107
+#define B_3 108
+#define B_4 109
+#define B_5 110
+#define B_6 111
+#define B_7 112
+#define B_8 113
+#define B_9 114
+#define B_0 115
+#define GO_TO 116
+#define CLEAR 117
+#define FLIP_W 7
+#define FLIP_E 21
 #endif
 
 #if REMOTE_T ==3
@@ -97,8 +137,8 @@
 #define N_WEST 68
 #define S_EAST 76
 #define S_WEST 72
-#define TRACK 89
-#define TRACK_OFF 30
+#define TRACK 30
+#define TRACK_OFF 31
 #define B_1 14
 #define B_2 15
 #define B_3 12
@@ -112,7 +152,7 @@
 #define GO_TO 28
 #define CLEAR 29
 #define FLIP_W 25
-#define FLIP_E 89
+#define FLIP_E 24
 #endif
 
 #if REMOTE_T == 0

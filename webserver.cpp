@@ -69,7 +69,9 @@ void handleConfig()
         msg += "\n" + serverweb.arg("TRACK");
         msg += "\n" + serverweb.arg("LONGITUDE");
         msg += "\n" + serverweb.arg("LATITUDE");
-        msg += "\n" + serverweb.arg("TIMEZONE") + "\n";
+        msg += "\n" + serverweb.arg("TIMEZONE");
+        msg += "\n" + serverweb.arg("BACK_AZ");
+        msg += "\n" + serverweb.arg("BACK_ALT") + "\n";
         String temp = serverweb.arg("SLEW");
         telescope->rate[3][0] = temp.toFloat();
         temp = serverweb.arg("SLEWA");
@@ -112,6 +114,10 @@ void handleConfig()
 
     content += "<tr><td>Slew</td><td><input type='number' step='0.01' name='SLEW' class=\"text_red\" value='" + String(telescope->rate[3][0]) + "'></td>";
     content += "<td><input type='number' step='0.01' name='SLEWA' class=\"text_red\" value='" + String(telescope->rate[3][1]) + "'></td></tr>";
+    
+    content += "<tr><td>BackSlash</td><td><input type='number' step='1' name='BACK_AZ' class=\"text_red\" value='" + String(telescope->azmotor->backslash) + "'></td>";
+    content += "<td><input type='number' step='1' name='BACK_ALT' class=\"text_red\" value='" + String(telescope->altmotor->backslash) + "'></td></tr>";
+    
     content += "<tr><td>Prescaler</td><td><input type='number' step='0.01' name='PRESCALER'  class=\"text_red\" value ='" + String(telescope->prescaler) + "' uSec</td></tr>";
     content += "<tr><td>Track</td><td><input type='number' name='TRACK'  class=\"text_red\" value ='" + String(telescope->track) + "' </td></tr></table></fieldset>";
     content += "<fieldset style=\"width:15%;border-radius:15px\"> <legend>Geodata</legend>";
@@ -125,6 +131,9 @@ void handleConfig()
     content += "<input type='submit' name='SUBMIT' class=\"button_red\" value='Submit'></fieldset></form>" + msg + "<br>";
     content += "<button onclick=\"location.href='/park'\" class=\"button_red\"  type=\"button\">Park telescope</button>";
     content += "<button onclick=\"location.href='/home'\" class=\"button_red\" type=\"button\">HOME</button><br>";
+    content += "<button onclick=\"location.href='/meridian?SIDE=0'\" class=\"button_red\"  type=\"button\">Meridian Flip EAST</button>";
+    content += "<button onclick=\"location.href='/meridian?SIDE=1'\" class=\"button_red\"  type=\"button\">Meridian Flip WEST</button><br>";
+    content += "<button onclick=\"location.href='/remote'\" class=\"button_red\" type=\"button\">IR Remote </button>";
     content += "<button onclick=\"location.href='/restart'\" class=\"button_red\" type=\"button\">Restart device</button><br>";
     content += " </body></html>";
     serverweb.send(200, "text/html", content);
@@ -270,6 +279,24 @@ bool handleFileRead(String path)
     }
     return false;
 }
+void handleMeridian(void)
+{
+  if (serverweb.hasArg("SIDE")){
+ String net = serverweb.arg("SIDE");
+ int   side = net.toInt();
+ meridianflip(telescope,side);}
+ 
+ String content =  "<html><style>" + String(BUTT) + String(TEXTT) + "</style>"+String(AUTO_SIZE)+"<body  bgcolor=\"#000000\" text=\"#FF6000\"><h2>ESP-PGT++ Meridian flip</h2><br>";
+  content += "Pier side: " + String(get_pierside(telescope)  ? "WEST" : "EAST") + "<br>";
+  content += "AZ Counter:" + String(telescope->azmotor->counter) + "<br>";
+  content += "Alt Counter:" + String(telescope->altmotor->counter) + "<br>";
+  content += "<button onclick=\"location.href='/'\"  type=\"button\">Back</button><br>";
+  content += "</body></html>";
+  serverweb.send(200, "text/html", content);
+}
+
+
+
 #ifdef IR_CONTROL
 void handleRemote(void)
 { char n;
@@ -336,6 +363,7 @@ void initwebserver(void)
     serverweb.on("/IR", handleIr);
 #endif      
     serverweb.on("/home", handleHome);
+    serverweb.on("/meridian",handleMeridian);
 
     // serverweb.on("/formatfilesystem",handleFormat)
     serverweb.onNotFound([]()
