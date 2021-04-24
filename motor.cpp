@@ -8,7 +8,7 @@
 
 extern int aux_count;
 
-void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick,int back)
+void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick,double accel,int back)
 {
     mt->speed=0;
     mt->targetspeed=spd;
@@ -16,7 +16,9 @@ void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick,int b
     mt->timertick= tick*1e-6;
     mt->maxcounter=maxcounter;//8000*6*180;//
     mt->resolution=(2.0* M_PI) /mt->maxcounter;
-    mt->acceleration=6e-4;
+    if (accel > 0.0)mt->acceleration = accel * SEC_TO_RAD ;
+    else mt->acceleration = 20e-4;
+    //mt->acceleration=6e-4;
     mt->id=ref;
     mt->slewing=0;
     set_motor_max_counter(ref, maxcounter);

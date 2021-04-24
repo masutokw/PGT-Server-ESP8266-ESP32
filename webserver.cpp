@@ -71,7 +71,9 @@ void handleConfig()
         msg += "\n" + serverweb.arg("LATITUDE");
         msg += "\n" + serverweb.arg("TIMEZONE");
         msg += "\n" + serverweb.arg("BACK_AZ");
-        msg += "\n" + serverweb.arg("BACK_ALT") + "\n";
+        msg += "\n" + serverweb.arg("BACK_ALT") ;
+        msg += "\n" + serverweb.arg("RAMP");
+        msg += "\n" + serverweb.arg("RAMPA")+ "\n";
         String temp = serverweb.arg("SLEW");
         telescope->rate[3][0] = temp.toFloat();
         temp = serverweb.arg("SLEWA");
@@ -114,7 +116,10 @@ void handleConfig()
 
     content += "<tr><td>Slew</td><td><input type='number' step='0.01' name='SLEW' class=\"text_red\" value='" + String(telescope->rate[3][0]) + "'></td>";
     content += "<td><input type='number' step='0.01' name='SLEWA' class=\"text_red\" value='" + String(telescope->rate[3][1]) + "'></td></tr>";
-    
+     content += "<tr><td>Prescaler</td><td><input type='number' name='PRESCALER' class=\"text_red\" value='" + String(telescope->prescaler) + "' uSec</td></tr>";
+  content += "<tr><td>Ramp</td><td><input type='number' step='0.01' name='RAMP' class=\"text_red\" value='" + String(telescope->azmotor->acceleration / SEC_TO_RAD) + "'></td>";
+  content += "<td><input type='number' step='0.01' name='RAMPA' class=\"text_red\" value='" + String(telescope->altmotor->acceleration / SEC_TO_RAD) + "'></td></tr>";
+  
     content += "<tr><td>BackSlash</td><td><input type='number' step='1' name='BACK_AZ' class=\"text_red\" value='" + String(telescope->azmotor->backslash) + "'></td>";
     content += "<td><input type='number' step='1' name='BACK_ALT' class=\"text_red\" value='" + String(telescope->altmotor->backslash) + "'></td></tr>";
     

@@ -16,7 +16,7 @@ typedef struct
 
 int sign(double t);
 
-void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick,int back);
+void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick,double accel,int back);
 double getposition(motor_t* mt);
 void  setspeed(motor_t* mt,double tspeed);
 void  setmaxcounter(motor_t* M,int value);
