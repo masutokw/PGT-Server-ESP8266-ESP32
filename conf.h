@@ -3,10 +3,15 @@
 #if defined(ESP8266)
 #define esp8266
 #include <ESP8266WiFi.h>
+#include <lwip/napt.h>
+#include <lwip/dns.h>
+#include <dhcpserver.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
 #include "sntp.h"
 #include <user_interface.h>
+#define NAPT 1000
+#define NAPT_PORT 10
 
 #else
 #include <WiFi.h>

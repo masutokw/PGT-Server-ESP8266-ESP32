@@ -34,6 +34,7 @@ WebServer serverweb(WEB_PORT);
 #endif
 char buff[50] = "Waiting for connection..";
 extern char  response[200];
+byte napt=0;
 mount_t *telescope;
 String ssi;
 String pwd;
@@ -161,6 +162,7 @@ void setup()
                 dns.fromString(f.readStringUntil('\n')))
         {
             WiFi.config(ip, gateway, subnet, dns);
+            napt=f.readStringUntil('\n').toInt();
         }
 
         f.close();
@@ -180,7 +182,13 @@ void setup()
     {
         //     while (1) delay(500);
     }
-    if (WiFi.status() != WL_CONNECTED) WiFi.disconnect(true);
+    if (WiFi.status() != WL_CONNECTED) WiFi.disconnect(true);else
+    { dhcps_set_dns(1,WiFi.gatewayIP());
+      dhcps_set_dns(0,WiFi.dnsIP(0));
+      err_t ret = ip_napt_init(NAPT, NAPT_PORT);
+    if (ret == ERR_OK) {
+    ret = ip_napt_enable_no(SOFTAP_IF, napt);}
+    }
 #ifdef OLED_DISPLAY
     oled_waitscr();
 #endif
