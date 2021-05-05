@@ -253,8 +253,8 @@ void handleNetwork( void)
         msg = serverweb.arg("IP");
         msg += "\n" + serverweb.arg("MASK");
         msg += "\n" + serverweb.arg("GATEWAY");
-        msg += "\n" + serverweb.arg("DNS") + "\n";
-        msg += "\n" + serverweb.arg("NAPT") + "\n";;
+        msg += "\n" + serverweb.arg("DNS") ;
+        msg += "\n" + serverweb.arg("NAPT") +"\n";;
     }
     String content = "<html><style>" + String(BUTT) + String(TEXTT) + "</style>"+String(AUTO_SIZE)+"<body  bgcolor=\"#000000\" text=\"#FF6000\"><form action='/network' method='POST'><h2>Network Config</h2>";
     content += "<fieldset style=\"width:15%;border-radius:15px\"><legend>Network</legend><table style='width:200px'>";
