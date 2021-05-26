@@ -4,7 +4,7 @@ void InitOTA()
   // ArduinoOTA.setPort(8266);
 
   // Hostname defaults to esp8266-[ChipID]
-  ArduinoOTA.setHostname("pgt-eq");
+  ArduinoOTA.setHostname("pgt-eq.local");
 
   // No authentication by default
   // ArduinoOTA.setPassword("admin");

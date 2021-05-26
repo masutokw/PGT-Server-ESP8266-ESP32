@@ -224,6 +224,27 @@ void handlePark(void)
 
     serverweb.send(200, "text/html", content);
 }
+#ifdef PEC_PIN
+
+void handlePEC(void)
+{
+    time_t now;
+    now = time(nullptr);
+  //  mount_park(telescope);
+    String content =  "<html><style>" + String(BUTT) + String(TEXTT) + "</style>"+String(AUTO_SIZE)+"<body  bgcolor=\"#000000\" text=\"#FF6000\"><h2>ESP-PGT++ PEC</h2><br>";
+    content += "Mount parked  ,position saved on EEPROM.<br>";
+    content += "AZ Counter:" + String(telescope->azmotor->counter) + "<br>";
+    content += "Alt Counter:" + String(telescope->altmotor->counter) + "<br>";
+    content += "PEC Counter:" + String(telescope->pec_counter) + "<br>";
+     content += "PEC error" + String(telescope->pec_counter-telescope->pec_counter_last) + "<br>";
+    
+    content += "TIme :" + String(ctime(&now)) + "<br>";
+    content += "<button onclick=\"location.href='/'\"  type=\"button\">Back</button><br>";
+    content += "</body></html>";
+
+    serverweb.send(200, "text/html", content);
+}
+#endif
 void handleRestart(void)
 {
     mount_park(telescope);
@@ -374,6 +395,9 @@ void initwebserver(void)
     serverweb.on("/home", handleHome);
     serverweb.on("/meridian",handleMeridian);
     serverweb.on("/config/potatoe",handleMeridian);
+#ifdef PEC_PIN
+    serverweb.on("/pe",handlePEC);
+#endif    
     // serverweb.on("/formatfilesystem",handleFormat)
     serverweb.onNotFound([]()
     {

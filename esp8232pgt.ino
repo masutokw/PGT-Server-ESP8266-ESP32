@@ -118,9 +118,20 @@ int net_task(void)
     }
     return millis() - lag;
 }
+#ifdef PEC_PIN
+void ICACHE_RAM_ATTR on_PEC(void)
+{   telescope->pec_counter_last=telescope->pec_counter ;
+   telescope->pec_counter=telescope->azmotor->counter; 
+     
+}
+#endif
 
 void setup()
 {
+#ifdef PEC_PIN
+ pinMode(PEC_PIN, INPUT_PULLUP);
+ attachInterrupt(digitalPinToInterrupt(PEC_PIN), on_PEC, FALLING);
+ #endif 
 
 #ifdef OLED_DISPLAY
     oled_initscr();

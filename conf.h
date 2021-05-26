@@ -28,7 +28,7 @@
 //#define OLED_DISPLAY
 #define OTA
 //#define FIXED_IP 17
-
+//#define PEC_PIN 0
 
 //mandatory
 #define SERVER_PORT 10001

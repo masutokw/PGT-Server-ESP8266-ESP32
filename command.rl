@@ -95,7 +95,7 @@ long command( char *str )
     long deg=0;
     int min=0;
     int sec=0;
-    int neg = 1;
+	int neg = 1;
     tmessage[0]=0;
     response[0]=0;
 
@@ -142,10 +142,10 @@ long command( char *str )
         action addsec {deg+=sec;}
         action storecmd {stcmd=fc;}
         action setdate {set_date(sec,min,deg);}
-		action return_alignmode{sprintf(tmessage,"P");}
+		action return_alignmode{sprintf(tmessage,"P"); APPEND;}
 #definicion sintaxis LX terminos auxiliares
         sexmin =  ([0-5][0-9])$getmin@addmin ;
-        sex= ([0-5][0-9] )$getsec@addsec;
+        sex= ([0-5][0-9] )$getsec@addsec (('.'digit{1,2}){,1});
         deg =(([\+] | [\-]@neg) |(digit @getgrads))(digit @getgrads){2} any sexmin ([\:]  sex)? ;
         RA = ([0-2] digit) $getgrads   ':' sexmin ('.'digit@rafrac | ':' sex) ;
         date = digit{2}$getmin "/" digit{2}$getsec "/" digit{2}$getgrads ;

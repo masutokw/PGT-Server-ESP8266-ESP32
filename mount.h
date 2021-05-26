@@ -33,6 +33,8 @@ typedef struct
     int srate;
     int track;
     int time_zone;
+    int pec_counter;
+     int pec_counter_last;
 } mount_t;
 
 mount_t* create_mount(void);
