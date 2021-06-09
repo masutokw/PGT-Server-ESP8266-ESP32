@@ -11,8 +11,10 @@ typedef struct
            acceleration,maxrange,min_range,
            timertick;
     int counter,maxcounter,range,slewing,auxcounter,backslash;
-    char id;
+    char id,locked;
 } motor_t;
+
+
 
 int sign(double t);
 

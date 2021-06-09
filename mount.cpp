@@ -1,8 +1,9 @@
 
 #include "mount.h"
 #include "misc.h"
+#include <Ticker.h>
 char sel_flag;
-
+Ticker pulse_dec_tckr, pulse_ra_tckr;
 mount_t* create_mount(void)
 
 {
@@ -140,6 +141,7 @@ int mount_stop(mount_t *mt, char direction)
     {
     case'n':
     case's':
+        if ((mt->srate)==0) mt->altmotor->locked=1; else mt->altmotor->locked=0;
         mt->altmotor->targetspeed = 0.0;
         break;
     case 'w':
@@ -174,6 +176,48 @@ void mount_move(mount_t *mt, char dir)
         break;
     };
 }
+void pulse_stop_dec(mount_t *mt)
+{
+    mt->altmotor->slewing = FALSE;
+    mt->altmotor->locked=1;
+    mt->altmotor->targetspeed = 0.0;
+   //  pulse_dec_tckr.detach();
+}
+void pulse_stop_ra(mount_t *mt)
+{
+    mt->azmotor->slewing = FALSE;
+    mt->azmotor->targetspeed = SID_RATE * SEC_TO_RAD * mt->track;
+   // pulse_ra_tckr.detach();
+  
+}
+
+void pulse_guide(mount_t *mt, char dir,int interval){
+    mt->altmotor->slewing = mt->azmotor->slewing = FALSE;
+    int srate = mt->srate;
+    int invert = (get_pierside(mt)) ? -1 : 1;
+    int  sid = (srate == 0) ? 1 : -1;
+    switch (dir)
+    {
+    case 'n':
+        mt->altmotor->targetspeed = SID_RATE * mt->rate[0][1] * SEC_TO_RAD * invert;
+        pulse_dec_tckr.once_ms(interval, pulse_stop_dec,mt);
+        break;
+    case 's':
+        mt->altmotor->targetspeed = -SID_RATE * mt->rate[0][1] * SEC_TO_RAD * invert;
+         pulse_dec_tckr.once_ms(interval, pulse_stop_dec,mt);
+        break;
+    case 'w':
+        mt->azmotor->targetspeed = SID_RATE * (mt->rate[0][0] + sid) * SEC_TO_RAD;
+         pulse_ra_tckr.once_ms(interval,pulse_stop_ra,mt);
+        break;
+    case 'e':
+        mt->azmotor->targetspeed = -SID_RATE * (mt->rate[0][0] - sid) * SEC_TO_RAD;
+         pulse_dec_tckr.once_ms(interval, pulse_stop_ra,mt);
+        break;
+    };
+  
+}
+
 
 void select_rate(mount_t *mt, char dir)
 {
@@ -223,12 +267,14 @@ void mount_lxra_str(char *message, mount_t *mt)
     int seconds = ang * RAD_TO_DEG * 3600.0;
     int x = trunc (seconds) / 15.0;
     int rest = ((seconds % 15) * 2) / 3;
-    rest %= 15;
+    rest %= 15;rest*=10;
     int gra = x / 3600;
     int temp = (x % 3600);
     int min = temp / 60;
     int sec = temp % 60;
-    sprintf(message, "%02d:%02d:%02d.%d#", gra, min, sec, rest);
+    sprintf(message, "%02d:%02d:%02d.%02d#", gra, min, sec, rest);
+ //  sprintf(message, "%02d:%02d:%02d#", gra, min, sec);
+ //sprintf(message, "%02d:%02d.%1d#", gra, min, rest);
 };
 
 void mount_lxde_str(char* message, mount_t *mt)

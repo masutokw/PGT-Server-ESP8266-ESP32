@@ -39,6 +39,7 @@ mount_t *telescope;
 String ssi;
 String pwd;
 Ticker speed_control_tckr, counters_poll_tkr;
+
 extern long command( char *str );
 time_t now;
 #ifdef PAD

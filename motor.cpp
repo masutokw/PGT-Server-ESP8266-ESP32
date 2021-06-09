@@ -25,7 +25,7 @@ void init_motor(motor_t* mt,char ref,int maxcounter,double spd,double tick,doubl
     mt->auxcounter=0;
     mt->backslash=back;
     setbackslash(mt,back,1);
-    
+    mt->locked=0;
 }
 
 void setspeed(motor_t* mt ,double tspeed)
@@ -44,7 +44,7 @@ void setspeed(motor_t* mt ,double tspeed)
         }   ;
         postscaler++;
     }
-    else base= PIC_COUNTER_TOP;
+    else base= PIC_COUNTER_TOP-mt->locked;
     motor_set_period (mt->id, PIC_COUNTER_TOP-base,sign(tspeed)*postscaler);
 }
 

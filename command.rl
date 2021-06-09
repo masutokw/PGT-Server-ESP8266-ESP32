@@ -98,7 +98,7 @@ long command( char *str )
 	int neg = 1;
     tmessage[0]=0;
     response[0]=0;
-
+	int pulse=0;
     %%{
         machine command;
         write data;
@@ -112,8 +112,10 @@ long command( char *str )
         action getgrads {ADD_DIGIT(deg,fc); }
         action getmin {ADD_DIGIT(min,fc); }
         action getsec {ADD_DIGIT(sec,fc); }
+		action getpulse{ADD_DIGIT(pulse,fc);}
         action neg { neg=-1;}
         action dir {mount_move(telescope,stcmd);}
+		action pulse_dir{pulse_guide(telescope,stcmd,pulse);}
         action Goto {mount_slew(telescope); sprintf(tmessage,"0");APPEND;}
         action stop {mount_stop(telescope,stcmd);}
         action rate {select_rate(telescope,stcmd); }
@@ -151,7 +153,7 @@ long command( char *str )
         date = digit{2}$getmin "/" digit{2}$getsec "/" digit{2}$getgrads ;
 #Definicion sintaxis comandos
         Poll= 'G'( 'R'%return_ra | [DZA]%return_dec |'r'%return_ra_target | 'd'%return_dec_target | 'L'%return_local_time |'S'%return_local_time|'C'%return_date|'M'%return_site|'t'%return_longitude|'g'%return_lat);
-        Move = 'M' ([nswe]@storecmd %dir | 'S'%Goto);
+        Move = 'M' (([nswe]@storecmd %dir) | ('S'%Goto)|('G'[nsew]@storecmd digit{4}$getpulse %pulse_dir));
         Rate = 'R' [CGMS]@storecmd (''|[0-4]) %rate;
         Set='S'(((([dazgt]@storecmd (''|space) deg ) | ([rLS]@storecmd (''|space) RA))%set_cmd_exec)|'C 'date%setdate|'w 3'%ok);
         Sync = "CM"(''|'R')%sync;

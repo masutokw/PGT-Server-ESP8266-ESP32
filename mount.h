@@ -55,5 +55,6 @@ void mount_lxra_str(char *message,mount_t *mt);
 void mount_park(mount_t *mt);
 void  meridianflip(mount_t *mt,int side);
 void mount_home_set(mount_t *mt);
+void pulse_guide(mount_t *mt, char dir,int interval);
 
 #endif
