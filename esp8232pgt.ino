@@ -194,13 +194,16 @@ void setup()
     {
         //     while (1) delay(500);
     }
-    if (WiFi.status() != WL_CONNECTED) WiFi.disconnect(true);else
+    if (WiFi.status() != WL_CONNECTED) WiFi.disconnect(true);
+#ifdef NAPT
+    else
    {if (napt){ dhcps_set_dns(1,WiFi.gatewayIP());
       dhcps_set_dns(0,WiFi.dnsIP(0));
       err_t ret = ip_napt_init(NAPT, NAPT_PORT);
     if (ret == ERR_OK) {
     ret = ip_napt_enable_no(SOFTAP_IF, napt);}}
     }
+ #endif  
 #ifdef OLED_DISPLAY
     oled_waitscr();
 #endif
