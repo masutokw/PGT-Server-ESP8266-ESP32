@@ -302,9 +302,9 @@ void mount_lxde_str(char* message, mount_t *mt)
 };
 
 int readconfig(mount_t *mt)
-{
+{    double tmp, tmp2;
     int maxcounter, maxcounteralt,back_az,back_alt;
-     double tmp, tmp2;
+    
     File f = SPIFFS.open("/mount.config", "r");
     if (!f) return -1;
     String s = f.readStringUntil('\n');
@@ -330,11 +330,12 @@ int readconfig(mount_t *mt)
     s = f.readStringUntil('\n');
     mt->lat = s.toFloat();
     s = f.readStringUntil('\n');
-    mt->time_zone = s.toFloat();
+    mt->time_zone = s.toInt();
     s = f.readStringUntil('\n');
     back_az=s.toInt();
     s = f.readStringUntil('\n');
     back_alt=s.toInt();
+     s = f.readStringUntil('\n');
     tmp = s.toFloat();
     s = f.readStringUntil('\n');
     tmp2 = s.toFloat();
