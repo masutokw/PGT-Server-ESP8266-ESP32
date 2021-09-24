@@ -18,12 +18,11 @@
 #endif
 #include <FS.h>
 //comment wifipass.h and uncomment for your  wifi parameters
-//#include "wifipass.h"
+//include "wifipass.h"
 const char* ssid = "MyWIFI";
 const char* password = "Mypassword";
 WiFiServer server(SERVER_PORT);
 WiFiClient serverClients[MAX_SRV_CLIENTS];
-
 #ifdef esp8266
 ESP8266WebServer serverweb(WEB_PORT);
 ESP8266HTTPUpdateServer httpUpdater;
@@ -122,8 +121,8 @@ int net_task(void)
 #ifdef PEC_PIN
 void ICACHE_RAM_ATTR on_PEC(void)
 {   telescope->pec_counter_last=telescope->pec_counter ;
-   telescope->pec_counter=telescope->azmotor->counter; 
-     
+   telescope->pec_counter=telescope->azmotor->counter;
+
 }
 #endif
 
@@ -132,7 +131,7 @@ void setup()
 #ifdef PEC_PIN
  pinMode(PEC_PIN, INPUT_PULLUP);
  attachInterrupt(digitalPinToInterrupt(PEC_PIN), on_PEC, FALLING);
- #endif 
+ #endif
 
 #ifdef OLED_DISPLAY
     oled_initscr();
@@ -203,7 +202,7 @@ void setup()
     if (ret == ERR_OK) {
     ret = ip_napt_enable_no(SOFTAP_IF, napt);}}
     }
- #endif  
+ #endif
 #ifdef OLED_DISPLAY
     oled_waitscr();
 #endif

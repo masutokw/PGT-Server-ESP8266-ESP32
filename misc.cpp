@@ -124,6 +124,83 @@ void lxprintra(char *message, double ang)
   sprintf(message, "%02d:%02d:%02d", gra, min, sec);
   //APPEND
 };
+void lxprintlat1(char *message,double ang)
+{
+
+  int x = ang  * 3600.0;
+  char c = '+';
+  if (x < 0)
+  {
+    x = -x;
+    c = '-';
+  }
+  int gra = x / 3600;
+  int temp = (x % 3600);
+  int min = temp / 60;
+  int sec = temp % 60;
+  sprintf(message, "%c%02d%c%02d#", c, gra, 225, min);
+}
+
+void lxprintlong1(char *message,double ang)
+{
+
+  int x = ang * 3600.0;
+  char c = '+';
+  if (x < 0)
+  {
+    x = -x;
+    c = '-';
+  }
+  int gra = x / 3600;
+  int temp = (x % 3600);
+  int min = temp / 60;
+  int sec = temp % 60;
+  sprintf(message, "%c%03d%c%02d#", c, gra, 225,min);
+  }
+  void lxprinttime1(char *message)
+{
+    time_t now;
+    struct tm *mtime;
+    now = time(nullptr);
+    mtime=localtime(&now);
+    sprintf(message,"%02d:%02d:%02d#",mtime->tm_hour,mtime->tm_min,mtime->tm_sec);
+
+}
+void lxprintdate1(char *message)
+{
+    time_t now;
+    struct tm *mtime;
+    now = time(nullptr);
+    mtime=localtime(&now);
+    if ((mtime->tm_year)<100) mtime->tm_year=100;
+    sprintf(message,"%02d/%02d/%02d#",mtime->tm_mon+1,mtime->tm_mday,mtime->tm_year-100);
+}
+void lxprintGMT_offset(char *message,double offset )
+{int gmt=offset;
+    char c='+';
+    if (offset>0) c='-';
+
+    sprintf(message,"%c%02d.0#",c,gmt);
+}
+void setclock (int year,int month,int day,int hour,int min,int sec,int gmt)
+{
+    time_t lxtime;
+    struct tm  lxtimeinfo;
+     struct timeval tv;
+
+    lxtimeinfo.tm_year = year;
+    lxtimeinfo.tm_mon = month;
+    lxtimeinfo.tm_mday = day;
+    lxtimeinfo.tm_hour = hour;
+    lxtimeinfo.tm_min = min;
+    lxtimeinfo.tm_sec = sec;
+    lxtime= mktime (&lxtimeinfo );
+    tv.tv_sec = lxtime;
+    tv.tv_usec = 0;
+    settimeofday(&tv, nullptr);
+
+}
+
 void config_NTP(int zone, int dls)
 {
 #ifdef esp8266

@@ -24,6 +24,12 @@
 //optional
 //#define NUNCHUCK_CONTROL
 #define IR_CONTROL
+#ifdef  NUNCHUCK_CONTROL
+#define CONTROL_MODE " NUNCHUK"
+#else
+#define CONTROL_MODE " IR Remote"
+#endif
+
 //#define PAD
 //#define OLED_DISPLAY
 #define OTA

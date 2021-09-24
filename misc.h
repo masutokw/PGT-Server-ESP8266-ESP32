@@ -29,7 +29,13 @@ void lxprintra1(char *message,double ang);
 void lxprintra(char *message,double ang);
 double calc_Ra(double lha,double longitude);
 double calc_lha(double ra,double longitude);
+void lxprintlong1(char *message,double ang);
+void lxprintlat1(char *message,double ang);
+void lxprinttime1(char *message);
+void lxprintdate1(char *message);
 void config_NTP(int zone,int dls );
+void lxprintGMT_offset(char *message,double offset );
+void setclock (int year,int month,int day,int hour,int min ,int sec,int gmt);
 int sign(double t);
 void ln_get_equ_prec (double mean_ra,double mean_dec, double JD,double  *position_ra,double  *position_dec);
 

@@ -16,7 +16,6 @@
 		<Unit filename="command.rl" />
 		<Unit filename="conf.h" />
 		<Unit filename="esp8232pgt.ino" />
-		<Unit filename="esp8266pgt.ino" />
 		<Unit filename="focus.cpp" />
 		<Unit filename="ir_control.cpp" />
 		<Unit filename="ir_control.h" />
@@ -35,11 +34,6 @@
 		<Unit filename="piclevel.h" />
 		<Unit filename="webserver.cpp" />
 		<Unit filename="webserver.h" />
-		<Unit filename="wifipass.h" />
-		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
-		</Extensions>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
