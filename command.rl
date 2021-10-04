@@ -63,7 +63,10 @@ void set_cmd_exe(char cmd,long date)
         telescope->lat=date/3600.0;
         break;
     case 'g':
-        telescope->longitude=(-date/3600.0);
+        //telescope->longitude=(-date/3600.0);
+		if (date <648000)
+        telescope->longitude=-date/3600.0; else
+		telescope->longitude=360.0-(date/3600.0);
         break;
     case 'L' :
         //timer0SetOverflowCount((long) (30.518 *date));

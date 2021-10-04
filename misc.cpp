@@ -145,11 +145,11 @@ void lxprintlong1(char *message,double ang)
 {
 
   int x = ang * 3600.0;
-  char c = '+';
+  char c = '-';
   if (x < 0)
   {
     x = -x;
-    c = '-';
+    c = '+';
   }
   int gra = x / 3600;
   int temp = (x % 3600);

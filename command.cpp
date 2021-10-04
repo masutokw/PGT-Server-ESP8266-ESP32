@@ -65,7 +65,10 @@ void set_cmd_exe(char cmd,long date)
         telescope->lat=date/3600.0;
         break;
     case 'g':
-        telescope->longitude=(-date/3600.0);
+        //telescope->longitude=(-date/3600.0);
+		if (date <648000)
+        telescope->longitude=-date/3600.0; else
+		telescope->longitude=360.0-(date/3600.0);
         break;
     case 'L' :
         //timer0SetOverflowCount((long) (30.518 *date));
@@ -286,7 +289,7 @@ static const int command_error = 0;
 static const int command_en_main = 81;
 
 
-/* #line 114 "command.rl" */
+/* #line 117 "command.rl" */
 
 
 
@@ -373,97 +376,97 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-/* #line 121 "command.rl" */
+/* #line 124 "command.rl" */
 	{ADD_DIGIT(deg,(*p)); }
 	break;
 	case 1:
-/* #line 122 "command.rl" */
+/* #line 125 "command.rl" */
 	{ADD_DIGIT(min,(*p)); }
 	break;
 	case 2:
-/* #line 123 "command.rl" */
+/* #line 126 "command.rl" */
 	{ADD_DIGIT(sec,(*p)); }
 	break;
 	case 3:
-/* #line 124 "command.rl" */
+/* #line 127 "command.rl" */
 	{ADD_DIGIT(pulse,(*p));}
 	break;
 	case 4:
-/* #line 125 "command.rl" */
+/* #line 128 "command.rl" */
 	{ neg=-1;}
 	break;
 	case 5:
-/* #line 126 "command.rl" */
+/* #line 129 "command.rl" */
 	{mount_move(telescope,stcmd);}
 	break;
 	case 6:
-/* #line 127 "command.rl" */
+/* #line 130 "command.rl" */
 	{pulse_guide(telescope,stcmd,pulse);}
 	break;
 	case 7:
-/* #line 128 "command.rl" */
+/* #line 131 "command.rl" */
 	{mount_slew(telescope); sprintf(tmessage,"0");APPEND;}
 	break;
 	case 8:
-/* #line 129 "command.rl" */
+/* #line 132 "command.rl" */
 	{mount_stop(telescope,stcmd);}
 	break;
 	case 9:
-/* #line 130 "command.rl" */
+/* #line 133 "command.rl" */
 	{select_rate(telescope,stcmd); }
 	break;
 	case 10:
-/* #line 131 "command.rl" */
+/* #line 134 "command.rl" */
 	{mount_lxra_str(tmessage,telescope);APPEND;}
 	break;
 	case 11:
-/* #line 132 "command.rl" */
+/* #line 135 "command.rl" */
 	{mount_lxde_str(tmessage,telescope);APPEND;}
 	break;
 	case 12:
-/* #line 133 "command.rl" */
+/* #line 136 "command.rl" */
 	{ ;}
 	break;
 	case 13:
-/* #line 134 "command.rl" */
-	{;}
-	break;
-	case 14:
-/* #line 135 "command.rl" */
-	{lxprintdate1(tmessage);APPEND;}
-	break;
-	case 15:
-/* #line 136 "command.rl" */
-	{ lxprintsite();}
-	break;
-	case 16:
 /* #line 137 "command.rl" */
 	{;}
 	break;
-	case 17:
+	case 14:
+/* #line 138 "command.rl" */
+	{lxprintdate1(tmessage);APPEND;}
+	break;
+	case 15:
+/* #line 139 "command.rl" */
+	{ lxprintsite();}
+	break;
+	case 16:
 /* #line 140 "command.rl" */
+	{;}
+	break;
+	case 17:
+/* #line 143 "command.rl" */
 	{lxprintlong1(tmessage,telescope->longitude);APPEND;}
 	break;
 	case 18:
-/* #line 141 "command.rl" */
+/* #line 144 "command.rl" */
 	{lxprintlat1(tmessage,telescope->lat);APPEND;}
 	break;
 	case 19:
-/* #line 143 "command.rl" */
+/* #line 146 "command.rl" */
 	{sync_eq(telescope);sprintf(tmessage,SYNC_MESSAGE);
                     telescope->altmotor->slewing= telescope->azmotor->slewing=FALSE;
                     APPEND;}
 	break;
 	case 20:
-/* #line 146 "command.rl" */
+/* #line 149 "command.rl" */
 	{deg+=((*p)-'0')*6;}
 	break;
 	case 21:
-/* #line 147 "command.rl" */
+/* #line 150 "command.rl" */
 	{ lxprinttime1(tmessage);APPEND;}
 	break;
 	case 22:
-/* #line 148 "command.rl" */
+/* #line 151 "command.rl" */
 	{
             set_cmd_exe(stcmd,(neg*(deg )));
             sprintf(tmessage,"1");
@@ -472,35 +475,35 @@ _match:
         }
 	break;
 	case 23:
-/* #line 154 "command.rl" */
+/* #line 157 "command.rl" */
 	{deg=deg*3600+min*60;}
 	break;
 	case 24:
-/* #line 155 "command.rl" */
+/* #line 158 "command.rl" */
 	{deg+=sec;}
 	break;
 	case 25:
-/* #line 156 "command.rl" */
+/* #line 159 "command.rl" */
 	{stcmd=(*p);}
 	break;
 	case 26:
-/* #line 157 "command.rl" */
+/* #line 160 "command.rl" */
 	{set_date(min,deg,sec);}
 	break;
 	case 27:
-/* #line 158 "command.rl" */
+/* #line 161 "command.rl" */
 	{sprintf(tmessage,"P"); APPEND;}
 	break;
 	case 28:
-/* #line 159 "command.rl" */
+/* #line 162 "command.rl" */
 	{ telescope->time_zone=deg;}
 	break;
 	case 29:
-/* #line 160 "command.rl" */
+/* #line 163 "command.rl" */
 	{lxprintGMT_offset(tmessage,telescope->time_zone );APPEND}
 	break;
 	case 30:
-/* #line 161 "command.rl" */
+/* #line 164 "command.rl" */
 	{set_time(deg,min,sec);}
 	break;
 /* #line 351 "command.cpp" */
@@ -516,7 +519,7 @@ _again:
 	_out: {}
 	}
 
-/* #line 195 "command.rl" */
+/* #line 198 "command.rl" */
 
 
 //---------------------------------------------------------------------------------------------------------------------
