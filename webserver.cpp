@@ -127,7 +127,9 @@ void handleConfig()
     content += "<td><input type='number' step='1' name='BACK_ALT' class=\"text_red\" value='" + String(telescope->altmotor->backslash) + "'></td></tr>";
 
     content += "<tr><td>Prescaler</td><td><input type='number' step='0.001' name='PRESCALER'  class=\"text_red\" value ='" + String(telescope->prescaler) + "' uSec</td></tr>";
-    content += "<tr><td>Track</td><td><input type='number' name='TRACK'  class=\"text_red\" value ='" + String(telescope->track) + "' </td></tr></table></fieldset>";
+    content += "<tr><td>Track</td><td><input type='number' name='TRACK'  class=\"text_red\" value ='" + String(telescope->track) + "' </td></tr></table>";
+   String  checked =(get_pierside(telescope)?"West":"East");
+   content += "Meridian side:<b> "+checked+"</b><br></fieldset>";
     content += "<fieldset style=\"width:15%;border-radius:15px\"> <legend>Geodata</legend>";
     content += "<table style='width:200px'>";
     content += "<tr><td>Longitude:</td><td><input type='number' step='any' id=\"lon\" name='LONGITUDE'  class=\"text_red\" value ='" +
