@@ -16,14 +16,14 @@
 #else
 #include <WiFi.h>
 #include <WebServer.h>
-#include <Update.h>
+#include <HTTPUpdateServer.h>
 #include <SPIFFS.h>
 #include "BluetoothSerial.h"
 
 #endif
 //optional
 //#define NUNCHUCK_CONTROL
-#define IR_CONTROL
+//#define IR_CONTROL
 #ifdef  NUNCHUCK_CONTROL
 #define CONTROL_MODE " NUNCHUK"
 #else

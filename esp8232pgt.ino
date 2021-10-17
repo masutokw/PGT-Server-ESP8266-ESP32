@@ -28,8 +28,9 @@ ESP8266WebServer serverweb(WEB_PORT);
 ESP8266HTTPUpdateServer httpUpdater;
 #else
 BluetoothSerial SerialBT;
+char *pin = "0000"; 
 WebServer serverweb(WEB_PORT);
-//UpdateServer httpUpdater;
+HTTPUpdateServer httpUpdater;
 #endif
 char buff[50] = "Waiting for connection..";
 extern char  response[200];
@@ -219,6 +220,11 @@ void setup()
     readconfig(telescope);
 #ifdef esp8266
     httpUpdater.setup(&serverweb);
+#else
+  httpUpdater.setup(&serverweb);
+  SerialBT.setPin(pin);
+  SerialBT.begin("PGTEQ_ESP32");
+  SerialBT.setPin(pin);    
 #endif
     config_NTP(telescope->time_zone, 0);
     initwebserver();

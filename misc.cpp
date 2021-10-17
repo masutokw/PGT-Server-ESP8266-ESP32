@@ -220,8 +220,7 @@ void config_NTP(int zone, int dls)
    setenv ("TZ", tx, 1);
    tzset (); 
 #else
-
-    configTime(zone * 3600, dls * 3600 , " 193.145.15.15", "0.es.pool.ntp.org", "cuco.rediris.es");
+    configTime(zone * 3600, dls * 3600 , "pool.ntp.org");
 #endif
 }
 
