@@ -12,7 +12,7 @@ extern mount_t *telescope;
 extern int  focuspeed;
 extern int  focuspeed_low;
 extern int focusmax;
-const uint16_t kRecvPin = 2;
+const uint16_t kRecvPin = IR_PIN;
 byte cmd_map [31] = {91, 88, 94, 86, 90, 18, 2, 13, 75, 74, 79, 83, 11, 87, 78, 6, 15, 30, 68, 17, 95, 76, 77, 73, 64, 72, 69, 31, 92, 25, 89};
 int obj = 0;
 double ra, dec;
@@ -24,7 +24,9 @@ void ir_init(void)
 {
   String s;
   irrecv.enableIRIn();  // Start the receiver
-  pinMode(kRecvPin, INPUT_PULLUP);
+#ifdef esp8266
+pinMode(kRecvPin, INPUT_PULLUP);
+#endif
   File f = SPIFFS.open("/remote.config", "r");
   if (f ) {
     for (uint8_t i = 0; i < 31; i++) {
@@ -41,8 +43,7 @@ void ir_read(void)
 {
   uint32_t  code;
   if (irrecv.decode(&results))
-  {
-
+  { 
     if (results.value == 0xFFFFFFFFFFFFFFFF) code = 0xFFFF;
     else
     { truecode = results.command;
@@ -228,7 +229,7 @@ void ir_read(void)
 }
 
 
-uint32 get_IR_lcode(uint32_t bcode)
+uint32_t get_IR_lcode(uint32_t bcode)
 {
   uint32_t n;
   for (n = 0; n < 31; n++)

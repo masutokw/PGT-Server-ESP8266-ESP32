@@ -328,7 +328,7 @@ const double Messier[110][2] ={
 void ir_init(void);
 void ir_read(void);
 
-uint32 get_IR_lcode(uint32_t bcode);
+uint32_t get_IR_lcode(uint32_t bcode);
 
 #endif
 #endif

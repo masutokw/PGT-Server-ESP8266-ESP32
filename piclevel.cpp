@@ -62,7 +62,7 @@ int readcounters (char id)
     {
 
         countr = Serial.readBytes((char *)&rsp,count);
-        if ((countr == 9) && (rsp.control == RESPONSE_OK))
+        if ((countr == 9) && ((rsp.control == RESPONSE_OK)||(rsp.control==id)))
         {
             aux_count=rsp.counteraux;
             return rsp.counter;
