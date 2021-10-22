@@ -35,7 +35,7 @@
 #endif
 
 //#define PAD
-//#define OLED_DISPLAY
+#define OLED_DISPLAY
 #define OTA
 //#define FIXED_IP 17
 //#define PEC_PIN 0
