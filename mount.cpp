@@ -2,6 +2,9 @@
 #include "mount.h"
 #include "misc.h"
 #include <Ticker.h>
+extern int  focuspeed;
+extern int  focuspeed_low;
+extern int focusmax;
 char sel_flag;
 Ticker pulse_dec_tckr, pulse_ra_tckr;
 mount_t* create_mount(void)
@@ -332,14 +335,21 @@ int readconfig(mount_t *mt)
     s = f.readStringUntil('\n');
     mt->time_zone = s.toInt();
     s = f.readStringUntil('\n');
-    back_az=s.toInt();
+     focusmax = s.toInt();
     s = f.readStringUntil('\n');
-    back_alt=s.toInt();
-     s = f.readStringUntil('\n');
+    focuspeed_low = s.toInt();
+    s = f.readStringUntil('\n');
+    focuspeed = s.toInt();
+    s = f.readStringUntil('\n');
     tmp = s.toFloat();
     s = f.readStringUntil('\n');
     tmp2 = s.toFloat();
     s = f.readStringUntil('\n');
+    back_az=s.toInt();
+    s = f.readStringUntil('\n');
+    back_alt=s.toInt();
+     s = f.readStringUntil('\n');
+    mt->mount_mode = s.toInt();
     init_motor( mt->azmotor, AZ_ID, maxcounter, SID_RATE * SEC_TO_RAD, mt->prescaler,tmp,back_az);
     init_motor( mt->altmotor,  ALT_ID, maxcounteralt, 0, mt->prescaler,tmp2,back_alt);
     return 0;

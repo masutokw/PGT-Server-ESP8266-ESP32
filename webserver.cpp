@@ -7,6 +7,9 @@ const String codes[31]={"EAST","WEST","NORTH","SOUTH","OK","FOCUS_F","FOCUS_B","
 "S_WEST","TRACK","UNTRACK","B_1","B_2","B_3","B_4","B_5","B_6","B_7","B_8","B_9","B_0","GO_TO","CLEAR","FLIP_W","FLIP_E"};
 #endif
 extern int obj;
+extern int  focuspeed;
+extern int  focuspeed_low;
+extern int focusmax;
 //extern const  String codes[31];
 long getDecimal(float val)
 {
@@ -73,10 +76,14 @@ void handleConfig()
         msg += "\n" + serverweb.arg("LONGITUDE");
         msg += "\n" + serverweb.arg("LATITUDE");
         msg += "\n" + serverweb.arg("TIMEZONE");
+        msg += "\n" + serverweb.arg("FOCUSMAX");
+        msg += "\n" + serverweb.arg("FOCUSPEEDLOW");
+        msg += "\n" + serverweb.arg("FOCUSPEED");
+        msg += "\n" + serverweb.arg("RAMP");
+        msg += "\n" + serverweb.arg("RAMPA");
         msg += "\n" + serverweb.arg("BACK_AZ");
         msg += "\n" + serverweb.arg("BACK_ALT") ;
-        msg += "\n" + serverweb.arg("RAMP");
-        msg += "\n" + serverweb.arg("RAMPA")+ "\n";
+        msg += "\n" + serverweb.arg("MOUNT") + "\n";
         String temp = serverweb.arg("SLEW");
         telescope->rate[3][0] = temp.toFloat();
         temp = serverweb.arg("SLEWA");
@@ -130,6 +137,13 @@ void handleConfig()
     content += "<tr><td>Track</td><td><input type='number' name='TRACK'  class=\"text_red\" value ='" + String(telescope->track) + "' </td></tr></table>";
    String  checked =(get_pierside(telescope)?"West":"East");
    content += "Meridian side:<b> "+checked+"</b><br></fieldset>";
+
+  content += "<fieldset style=\"width:15% ; border-radius:15px;\"> <legend>Focuser</legend>";
+  content += "<table style='width:200px'>";
+  content += "<tr><td>Focus Max:</td><td><input type='number'step='1' name='FOCUSMAX' class=\"text_red\" value='" + String(focusmax) + "'></td></tr>";
+  content += "<tr><td>Low Speed:</td><td><input type='number'step='1' name='FOCUSPEEDLOW' class=\"text_red\" value='" + String(focuspeed_low) + "'></td></tr>";
+  content += "<tr><td>Speed</td><td><input type='number'step='1' name='FOCUSPEED' class=\"text_red\" value='" + String(focuspeed) + "'></td></tr></table></fieldset>";
+   
     content += "<fieldset style=\"width:15%;border-radius:15px\"> <legend>Geodata</legend>";
     content += "<table style='width:200px'>";
     content += "<tr><td>Longitude:</td><td><input type='number' step='any' id=\"lon\" name='LONGITUDE'  class=\"text_red\" value ='" +

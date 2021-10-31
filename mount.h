@@ -34,7 +34,8 @@ typedef struct
     int track;
     int time_zone;
     int pec_counter;
-     int pec_counter_last;
+    int pec_counter_last;
+    int mount_mode;
 } mount_t;
 
 mount_t* create_mount(void);

@@ -141,6 +141,7 @@ void setup()
   nunchuck_init(SDA_PIN, SCL_PIN);
 #endif
 
+
   WiFi.mode(WIFI_AP_STA);
   WiFi.softAP("PGT_ESP", "boquerones");
   SPIFFS.begin();

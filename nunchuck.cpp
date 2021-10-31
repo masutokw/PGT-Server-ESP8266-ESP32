@@ -4,6 +4,9 @@
 #include "mount.h"
 #include "focus.h"
 extern mount_t *telescope;
+extern int  focuspeed;
+extern int  focuspeed_low;
+extern int focusmax;
 #include "nunchuck.h"
 #define ADDRESS 0x52
 int chuckbuffer[6];
@@ -48,7 +51,7 @@ void nunchuck_read(void)
             {
             case 0 :
                 if (pressed==2) telescope->srate = 3;
-                else if (lastpress==1) gotofocuser(telescope->azmotor,100000,100);
+                else if (lastpress==1) gotofocuser(telescope->azmotor,focusmax, focuspeed_low);
                 else  mount_move(telescope, 'e'); //Serial.println("Left");
                 break;
             case 1 :
@@ -57,7 +60,7 @@ void nunchuck_read(void)
                 break;
             case 2 :
                 if (pressed==2) telescope->srate = 2 ;
-                else if (lastpress==1) gotofocuser(telescope->azmotor,0,100);
+                else if (lastpress==1) gotofocuser(telescope->azmotor, 0,  focuspeed_low);
                 else  mount_move(telescope, 'w'); //Serial.println("Rigth");
                 break;
             default:
@@ -74,7 +77,7 @@ void nunchuck_read(void)
             {
             case 0 :
                 if (pressed==2) telescope->srate = 0;
-                else if (lastpress==1) gotofocuser(telescope->azmotor, 100000,8);
+                else if (lastpress==1) gotofocuser(telescope->azmotor, focusmax, focuspeed);
                 else mount_move(telescope, 's'); //Serial.println("Down");
                 break;
             case 1 :
@@ -83,7 +86,7 @@ void nunchuck_read(void)
                 break;
             case 2 :
                 if (pressed==2) telescope->srate = 1;
-                else if (lastpress==1) gotofocuser(telescope->azmotor,0,8);
+                else if (lastpress==1) gotofocuser(telescope->azmotor, 0,  focuspeed);
                 else mount_move(telescope, 'n'); //Serial.println("Up");
                 break;
             default:
